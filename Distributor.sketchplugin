@@ -18,15 +18,27 @@ function sortByLeft(a,b){
   return [[a frame] left] - [[b frame] left];
 }
 
+function createLabel(text, frame) {
+  var label = [[NSTextField alloc] initWithFrame:frame];
+  [label setStringValue:text];
+  [label setBezeled:false];
+  [label setDrawsBackground:false];
+  [label setEditable:false];
+  [label setSelectable:false];
+  return label;
+}
 
 function createChoices(msg){
   var viewBox = [[NSBox alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
   [viewBox setTitle:""];
 
+  var dimensionLabel = createLabel("Distribute:", NSMakeRect(0,85,300, 20));
+  [viewBox addSubview:dimensionLabel];
+
   var prototype = [[NSButtonCell alloc] init];
   [prototype setButtonType:NSRadioButton];
   [prototype setTitle:"---------------------------------------------"];
-  var myMatrix = [[NSMatrix alloc] initWithFrame:NSMakeRect(0, 0, 300, 65)
+  var myMatrix = [[NSMatrix alloc] initWithFrame:NSMakeRect(0, 45, 300, 40)
     mode:NSRadioModeMatrix
     prototype:prototype
     numberOfRows:2
@@ -36,6 +48,8 @@ function createChoices(msg){
   [[cellArray objectAtIndex:1] setTitle:"Horizontally"];
   [viewBox addSubview:myMatrix];
 
+  var spacingLabel = createLabel("Spacing:", NSMakeRect(0, 20, 300, 20));
+  [viewBox addSubview:spacingLabel];
 
   var spacingField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 40, 20)];
   [spacingField setStringValue:10];
