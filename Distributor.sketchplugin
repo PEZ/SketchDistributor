@@ -1,0 +1,91 @@
+// Based on bomberstudios Align scetchkommands
+// https://github.com/bomberstudios/sketch-commands/tree/master/Align
+
+function toJSArray(arr) {
+  var len = [arr count],
+      res = [];
+  while(len--) {
+    res.push(arr[len]);
+  }
+  return res;
+}
+
+function sortByTop(a,b){
+  return [[a frame] top] - [[b frame] top];
+}
+
+function sortByLeft(a,b){
+  return [[a frame] left] - [[b frame] left];
+}
+
+
+function createChoices(msg){
+  var viewBox = [[NSBox alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+  [viewBox setTitle:""];
+
+  var prototype = [[NSButtonCell alloc] init];
+  [prototype setButtonType:NSRadioButton];
+  [prototype setTitle:"---------------------------------------------"];
+  var myMatrix = [[NSMatrix alloc] initWithFrame:NSMakeRect(0, 0, 300, 65)
+    mode:NSRadioModeMatrix
+    prototype:prototype
+    numberOfRows:2
+    numberOfColumns:1];
+  var cellArray = [myMatrix cells];
+  [[cellArray objectAtIndex:0] setTitle:"Vertically"];
+  [[cellArray objectAtIndex:1] setTitle:"Horizontally"];
+  [viewBox addSubview:myMatrix];
+
+
+  var spacingField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 40, 20)];
+  [spacingField setStringValue:10];
+  [viewBox addSubview:spacingField];
+
+  [viewBox sizeToFit];
+
+
+  var alert = [[NSAlert alloc] init];
+  [alert setMessageText:msg];
+  [alert addButtonWithTitle:"OK"];
+  [alert addButtonWithTitle:"Cancel"];
+  [alert setAccessoryView:viewBox];
+
+  var responseCode = [alert runModal];
+
+  var dimension = [[myMatrix selectedCell] title];
+  return [responseCode, dimension, [spacingField integerValue]];
+}
+
+if ([selection count] > 0) {
+  var choices = createChoices('Distribute ' + [selection count] + ' objects'),
+      buttonChoice = choices[0] == 1000 ? "OK" : "Cancel",
+      dimension = choices[1],
+      spacing = choices[2];
+
+  if (buttonChoice === "OK") {
+    var jsSelection   = toJSArray(selection),
+      	sortedByLeft  = jsSelection.sort(sortByLeft),
+        sortedByTop   = jsSelection).sort(sortByTop),
+        firstLeft     = sortedByLeft[0],
+        firstTop      = sortedByTop[0],
+        left          = [[firstLeft frame] left],
+        top           = [[firstTop frame] top];
+
+    if (String(dimension) === "Vertically") {
+      sortedByTop.forEach(function(layer){
+        [[layer frame] setY:top];
+        top = [[layer frame] y] + [[layer frame] height] + spacing;
+      });
+    }
+    else {
+      sortedByLeft.forEach(function(layer){
+        [[layer frame] setX:left];
+        left = [[layer frame] x] + [[layer frame] width] + spacing;
+      });
+    }
+  }
+}
+else {
+  var app = [NSApplication sharedApplication];
+  [app displayDialog:"No selection, no fun." withTitle:"Distributor is sad"]
+}
