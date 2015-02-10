@@ -21,6 +21,7 @@ function sortByLeft(a, b) {
 function createLabel(text, frame) {
   var label = [[NSTextField alloc] initWithFrame:frame];
   [label setStringValue:text];
+  [label setFont:[NSFont boldSystemFontOfSize:12]];
   [label setBezeled:false];
   [label setDrawsBackground:false];
   [label setEditable:false];
@@ -32,8 +33,7 @@ function createChoices(msg) {
   var viewBox = [[NSBox alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
   [viewBox setTitle:""];
 
-  var dimensionLabel = createLabel("Distribute:", NSMakeRect(0,85,300, 20));
-  [viewBox addSubview:dimensionLabel];
+  [viewBox addSubview:createLabel("Direction:", NSMakeRect(0,85,300, 20))];
 
   var prototype = [[NSButtonCell alloc] init];
   [prototype setButtonType:NSRadioButton];
@@ -48,15 +48,13 @@ function createChoices(msg) {
   [[cellArray objectAtIndex:1] setTitle:"Horizontally"];
   [viewBox addSubview:myMatrix];
 
-  var spacingLabel = createLabel("Spacing:", NSMakeRect(0, 20, 300, 20));
-  [viewBox addSubview:spacingLabel];
+  [viewBox addSubview:createLabel("Spacing:", NSMakeRect(0, 20, 300, 20))];
 
   var spacingField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 40, 20)];
   [spacingField setStringValue:10];
   [viewBox addSubview:spacingField];
 
   [viewBox sizeToFit];
-
 
   var alert = [[NSAlert alloc] init];
   [alert setMessageText:msg];
