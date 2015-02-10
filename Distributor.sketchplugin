@@ -10,11 +10,11 @@ function toJSArray(arr) {
   return res;
 }
 
-function sortByTop(a,b){
+function sortByTop(a, b) {
   return [[a frame] top] - [[b frame] top];
 }
 
-function sortByLeft(a,b){
+function sortByLeft(a, b) {
   return [[a frame] left] - [[b frame] left];
 }
 
@@ -28,7 +28,7 @@ function createLabel(text, frame) {
   return label;
 }
 
-function createChoices(msg){
+function createChoices(msg) {
   var viewBox = [[NSBox alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
   [viewBox setTitle:""];
 
@@ -86,13 +86,13 @@ if ([selection count] > 0) {
         top           = [[firstTop frame] top];
 
     if (String(dimension) === "Vertically") {
-      sortedByTop.forEach(function(layer){
+      sortedByTop.forEach(function(layer) {
         [[layer frame] setY:top];
         top = [[layer frame] y] + [[layer frame] height] + spacing;
       });
     }
     else {
-      sortedByLeft.forEach(function(layer){
+      sortedByLeft.forEach(function(layer) {
         [[layer frame] setX:left];
         left = [[layer frame] x] + [[layer frame] width] + spacing;
       });
