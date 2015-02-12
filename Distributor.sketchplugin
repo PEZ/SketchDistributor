@@ -1,21 +1,6 @@
-// Based on bomberstudios Align scetchkommands
-// https://github.com/bomberstudios/sketch-commands/tree/master/Align
-
-function toJSArray(arr) {
-  var len = [arr count],
-      res = [];
-  while(len--) {
-    res.push(arr[len]);
-  }
-  return res;
-}
-
-function sortByTop(a, b) {
-  return [[a frame] top] - [[b frame] top];
-}
-
-function sortByLeft(a, b) {
-  return [[a frame] left] - [[b frame] left];
+function sortedArray(arr, sortDescriptorKey) {
+  var sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:sortDescriptorKey ascending:1];
+  return [selection sortedArrayUsingDescriptors:[sortDescriptor]];
 }
 
 function createLabel(text, frame) {
@@ -75,22 +60,23 @@ if ([selection count] > 0) {
       spacing = choices[2];
 
   if (buttonChoice === "OK") {
-    var jsSelection   = toJSArray(selection),
-      	sortedByLeft  = jsSelection.sort(sortByLeft),
-        sortedByTop   = jsSelection).sort(sortByTop),
+    var sortedByLeft  = sortedArray(selection, "frame.left"),
+        sortedByTop   = sortedArray(selection, "frame.top"),
         firstLeft     = sortedByLeft[0],
         firstTop      = sortedByTop[0],
         left          = [[firstLeft frame] left],
         top           = [[firstTop frame] top];
 
     if (String(dimension) === "Vertically") {
-      sortedByTop.forEach(function(layer) {
+      var loopV = [sortedByTop objectEnumerator];
+      while (layer = [loopV nextObject]) {
         [[layer frame] setY:top];
         top = [[layer frame] y] + [[layer frame] height] + spacing;
       });
     }
     else {
-      sortedByLeft.forEach(function(layer) {
+      var loopH = [sortedByTop objectEnumerator];
+      while (layer = [loopH nextObject]) {
         [[layer frame] setX:left];
         left = [[layer frame] x] + [[layer frame] width] + spacing;
       });
