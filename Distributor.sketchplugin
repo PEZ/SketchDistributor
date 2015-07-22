@@ -2,7 +2,7 @@ var app = [NSApplication sharedApplication];
 
 function sortedArray(arr, sortDescriptorKey) {
   var sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:sortDescriptorKey ascending:1];
-  return [selection sortedArrayUsingDescriptors:[sortDescriptor]];
+  return [arr sortedArrayUsingDescriptors:[sortDescriptor]];
 }
 
 function createLabel(text, frame) {
