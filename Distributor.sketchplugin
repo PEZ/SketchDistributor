@@ -1,3 +1,5 @@
+var app = [NSApplication sharedApplication];
+
 function sortedArray(arr, sortDescriptorKey) {
   var sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:sortDescriptorKey ascending:1];
   return [selection sortedArrayUsingDescriptors:[sortDescriptor]];
@@ -70,20 +72,19 @@ if ([selection count] > 0) {
     if (String(dimension) === "Vertically") {
       var loopV = [sortedByTop objectEnumerator];
       while (layer = [loopV nextObject]) {
-        [[layer frame] setY:top];
-        top = [[layer frame] y] + [[layer frame] height] + spacing;
+        [[layer frame] setTop:top];
+        top = [[layer frame] top] + [[layer frame] height] + spacing;
       });
     }
     else {
       var loopH = [sortedByTop objectEnumerator];
       while (layer = [loopH nextObject]) {
-        [[layer frame] setX:left];
-        left = [[layer frame] x] + [[layer frame] width] + spacing;
+        [[layer frame] setLeft:left];
+        left = [[layer frame] left] + [[layer frame] width] + spacing;
       });
     }
   }
 }
 else {
-  var app = [NSApplication sharedApplication];
   [app displayDialog:"No selection, no fun." withTitle:"Distributor is sad"]
 }
