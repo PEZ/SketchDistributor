@@ -1,4 +1,20 @@
 var app = [NSApplication sharedApplication];
+var selection = context.selection;
+var command = context.command;
+var doc = context.doc;
+var page = [doc currentPage];
+
+var DEFAULT_SPACING = 10;
+var saved_spacing = null;
+try {
+    saved_spacing = [command valueForKey:"distributorSpacing" onLayer:page];
+}
+catch (err) {
+    log("Failed fetching saved spacing, layer commands not supported?");
+}
+if (saved_spacing == null) {
+    saved_spacing = DEFAULT_SPACING;
+}
 
 function sortedArray(arr, sortDescriptorKey) {
   var sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:sortDescriptorKey ascending:1];
@@ -39,7 +55,7 @@ function createChoices(msg) {
   [viewBox addSubview:createLabel("Spacing:", NSMakeRect(0, 20, 300, 20))];
 
   var spacingField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 40, 20)];
-  [spacingField setStringValue:10];
+  [spacingField setStringValue:saved_spacing];
   [viewBox addSubview:spacingField];
 
   [viewBox sizeToFit];
@@ -84,6 +100,13 @@ if ([selection count] > 0) {
         [[layer frame] setLeft:left];
         left = [[layer frame] left] + [[layer frame] width] + spacing;
       });
+    }
+    
+    try {
+        [command setValue:spacing forKey:"distributorSpacing" onLayer:page];
+    }
+    catch (err) {
+        log("Failed saving spacing, layer commands not supported?");
     }
   }
 }
