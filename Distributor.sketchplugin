@@ -2,7 +2,8 @@ var app = [NSApplication sharedApplication];
 
 function sortedArray(arr, sortDescriptorKey) {
   var sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:sortDescriptorKey ascending:1];
-  return [arr sortedArrayUsingDescriptors:[sortDescriptor]];
+  var sorted = [arr sortedArrayUsingDescriptors:[sortDescriptor]];
+  return sorted;
 }
 
 function createLabel(text, frame) {
@@ -69,6 +70,7 @@ if ([selection count] > 0) {
         left          = [[firstLeft frame] left],
         top           = [[firstTop frame] top];
 
+
     if (String(dimension) === "Vertically") {
       var loopV = [sortedByTop objectEnumerator];
       while (layer = [loopV nextObject]) {
@@ -77,7 +79,7 @@ if ([selection count] > 0) {
       });
     }
     else {
-      var loopH = [sortedByTop objectEnumerator];
+      var loopH = [sortedByLeft objectEnumerator];
       while (layer = [loopH nextObject]) {
         [[layer frame] setLeft:left];
         left = [[layer frame] left] + [[layer frame] width] + spacing;
