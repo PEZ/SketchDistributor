@@ -6,14 +6,21 @@ var page = [doc currentPage];
 
 var DEFAULT_SPACING = 10;
 var saved_spacing = null;
+var DEFAULT_DIMENSION = 0;
+var saved_dimension = null;
+
 try {
     saved_spacing = [command valueForKey:"distributorSpacing" onLayer:page];
+    saved_dimension = [command valueForKey:"distributorDimension" onLayer:page];
 }
 catch (err) {
-    log("Failed fetching saved spacing, layer commands not supported?");
+    log("Failed fetching cashed values, layer commands not supported?");
 }
 if (saved_spacing == null) {
     saved_spacing = DEFAULT_SPACING;
+}
+if (saved_dimension == null || (saved_dimension != 0 && saved_dimension != 1)) {
+    saved_dimension = DEFAULT_DIMENSION;
 }
 
 function sortedArray(arr, sortDescriptorKey) {
@@ -42,19 +49,20 @@ function createChoices(msg) {
   var prototype = [[NSButtonCell alloc] init];
   [prototype setButtonType:NSRadioButton];
   [prototype setTitle:"---------------------------------------------"];
-  var myMatrix = [[NSMatrix alloc] initWithFrame:NSMakeRect(0, 45, 300, 40)
+  var dimensionChoices = [[NSMatrix alloc] initWithFrame:NSMakeRect(0, 45, 300, 40)
     mode:NSRadioModeMatrix
     prototype:prototype
     numberOfRows:2
     numberOfColumns:1];
-  var cellArray = [myMatrix cells];
+  var cellArray = [dimensionChoices cells];
   [[cellArray objectAtIndex:0] setTitle:"Vertically"];
   [[cellArray objectAtIndex:1] setTitle:"Horizontally"];
-  [viewBox addSubview:myMatrix];
+  [dimensionChoices selectCellAtRow:saved_dimension column:0];
+  [viewBox addSubview:dimensionChoices];
 
   [viewBox addSubview:createLabel("Spacing:", NSMakeRect(0, 20, 300, 20))];
 
-  var spacingField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 40, 20)];
+  var spacingField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 100, 20)];
   [spacingField setStringValue:saved_spacing];
   [viewBox addSubview:spacingField];
 
@@ -68,15 +76,17 @@ function createChoices(msg) {
 
   var responseCode = [alert runModal];
 
-  var dimension = [[myMatrix selectedCell] title];
-  return [responseCode, dimension, [spacingField integerValue]];
+  var dimension = [[dimensionChoices selectedCell] title];
+  return [responseCode, dimension, [spacingField stringValue]];
 }
 
 if ([selection count] > 0) {
   var choices = createChoices('Distribute ' + [selection count] + ' objects'),
       buttonChoice = choices[0] == 1000 ? "OK" : "Cancel",
       dimension = choices[1],
-      spacing = choices[2];
+      spacingString = choices[2],
+      formatter = [[NSNumberFormatter alloc] init];
+      spacing = null;
 
   if (buttonChoice === "OK") {
     var sortedByLeft  = sortedArray(selection, "frame.left"),
@@ -86,30 +96,38 @@ if ([selection count] > 0) {
         left          = [[firstLeft frame] left],
         top           = [[firstTop frame] top];
 
-
-    if (String(dimension) === "Vertically") {
-      var loopV = [sortedByTop objectEnumerator];
-      while (layer = [loopV nextObject]) {
-        [[layer frame] setTop:top];
-        top = [[layer frame] top] + [[layer frame] height] + spacing;
-      });
+    spacing = [formatter numberFromString:spacingString];
+    if (spacing != null) {
+        if (String(dimension) === "Vertically") {
+            var loopV = [sortedByTop objectEnumerator];
+            while (layer = [loopV nextObject]) {
+                [[layer frame] setTop:top];
+                top = [[layer frame] top] + [[layer frame] height] + spacing;
+            });
+        }
+        else {
+            var loopH = [sortedByLeft objectEnumerator];
+            while (layer = [loopH nextObject]) {
+                [[layer frame] setLeft:left];
+                left = [[layer frame] left] + [[layer frame] width] + spacing;
+            });
+        }
     }
     else {
-      var loopH = [sortedByLeft objectEnumerator];
-      while (layer = [loopH nextObject]) {
-        [[layer frame] setLeft:left];
-        left = [[layer frame] left] + [[layer frame] width] + spacing;
-      });
+        log("Wrong number format for spacing: " + spacingString);
+        [app displayDialog:("Wrong number format for spacing: " + spacingString) withTitle:"Distributor is sad"];
     }
     
     try {
-        [command setValue:spacing forKey:"distributorSpacing" onLayer:page];
+        [command setValue:spacingString forKey:"distributorSpacing" onLayer:page];
+        [command setValue:(String(dimension) === "Horizontally" ? 1 : 0) forKey:"distributorDimension" onLayer:page];
     }
     catch (err) {
-        log("Failed saving spacing, layer commands not supported?");
+        log("Failed saving values, layer commands not supported?");
     }
   }
 }
 else {
-  [app displayDialog:"No selection, no fun." withTitle:"Distributor is sad"]
+  log("No selection to distribute");
+  [app displayDialog:"No selection, no fun." withTitle:"Distributor is sad"];
 }
