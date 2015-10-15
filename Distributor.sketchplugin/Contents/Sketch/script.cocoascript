@@ -1,0 +1,149 @@
+var Lib = {
+    DEFAULT_SPACING: 10,
+    spacing: null,
+    DEFAULT_DIMENSION: 0,
+    dimension: null,
+
+    app: null,
+    selection: null,
+    command: null,
+    page: null,
+    app: [NSApplication sharedApplication],
+
+    init: function(context) {
+        this.selection = context.selection;
+        this.command = context.command;
+        this.page = [(context.document) currentPage];
+
+        try {
+            this.spacing = [(this.command) valueForKey:"distributorSpacing" onLayer:this.page];
+            this.dimension = [(this.command) valueForKey:"distributorDimension" onLayer:this.page];
+        }
+        catch (err) {
+            log("Failed fetching cashed values, layer commands not supported?");
+        }
+        if (this.spacing == null) {
+            this.spacing = this.DEFAULT_SPACING;
+        }
+        if (this.dimension == null || (this.dimension != 0 && this.dimension != 1)) {
+            this.dimension = this.DEFAULT_DIMENSION;
+        }
+    },
+
+    sortedArray: function(arr, sortDescriptorKey) {
+        var sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:sortDescriptorKey ascending:1];
+        var sorted = [arr sortedArrayUsingDescriptors:[sortDescriptor]];
+        return sorted;
+    },
+
+    createLabel: function(text, frame) {
+        var label = [[NSTextField alloc] initWithFrame:frame];
+        [label setStringValue:text];
+        [label setFont:[NSFont boldSystemFontOfSize:12]];
+        [label setBezeled:false];
+        [label setDrawsBackground:false];
+        [label setEditable:false];
+        [label setSelectable:false];
+        return label;
+    },
+
+    createChoices: function(msg) {
+        var viewBox = [[NSBox alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+        [viewBox setTitle:""];
+
+        [viewBox addSubview:Lib.createLabel("Direction:", NSMakeRect(0,85,300, 20))];
+
+        var prototype = [[NSButtonCell alloc] init];
+        [prototype setButtonType:NSRadioButton];
+        [prototype setTitle:"---------------------------------------------"];
+        var dimensionChoices = [[NSMatrix alloc] initWithFrame:NSMakeRect(0, 45, 300, 40)
+            mode:NSRadioModeMatrix
+            prototype:prototype
+            numberOfRows:2
+            numberOfColumns:1];
+        var cellArray = [dimensionChoices cells];
+        [[cellArray objectAtIndex:0] setTitle:"Vertically"];
+        [[cellArray objectAtIndex:1] setTitle:"Horizontally"];
+        [dimensionChoices selectCellAtRow:this.dimension column:0];
+        [viewBox addSubview:dimensionChoices];
+
+        [viewBox addSubview:Lib.createLabel("Spacing:", NSMakeRect(0, 20, 300, 20))];
+
+        var spacingField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 100, 20)];
+        [spacingField setStringValue:this.spacing];
+        [viewBox addSubview:spacingField];
+
+        [viewBox sizeToFit];
+
+        var alert = [[NSAlert alloc] init];
+        [alert setMessageText:msg];
+        [alert addButtonWithTitle:"OK"];
+        [alert addButtonWithTitle:"Cancel"];
+        [alert setAccessoryView:viewBox];
+
+        var responseCode = [alert runModal];
+
+        var dimension = [[dimensionChoices selectedCell] title];
+        return [responseCode, dimension, [spacingField stringValue]];
+    },
+
+    distribute: function(dimension, spacingString) {
+        var sortedByLeft  = this.sortedArray(this.selection, "frame.left"),
+        sortedByTop       = this.sortedArray(this.selection, "frame.top"),
+        firstLeft         = sortedByLeft[0],
+        firstTop          = sortedByTop[0],
+        left              = [[firstLeft frame] left],
+        top               = [[firstTop frame] top],
+        formatter         = [[NSNumberFormatter alloc] init],
+        spacing           = [formatter numberFromString:spacingString];
+
+        if (spacing != null) {
+            if (String(dimension) === "Vertically") {
+                var loopV = [sortedByTop objectEnumerator];
+                while (layer = [loopV nextObject]) {
+                    [[layer frame] setTop:top];
+                    top = [[layer frame] top] + [[layer frame] height] + spacing;
+                });
+            }
+            else {
+                var loopH = [sortedByLeft objectEnumerator];
+                while (layer = [loopH nextObject]) {
+                    [[layer frame] setLeft:left];
+                    left = [[layer frame] left] + [[layer frame] width] + spacing;
+                });
+            }
+        }
+        else {
+            log("Wrong number format for spacing: " + spacingString);
+            [(this.app) displayDialog:("Wrong number format for spacing: " + spacingString) withTitle:"Distributor is sad"];
+        }
+    }
+};
+
+var onRun = function(context) {
+    Lib.init(context);
+
+    if ([(Lib.selection) count] > 0) {
+        var choices = Lib.createChoices('Distribute ' + [(Lib.selection) count] + ' objects'),
+            buttonChoice = choices[0] == 1000 ? "OK" : "Cancel",
+            dimension = choices[1],
+            spacingString = choices[2],
+            spacing = null;
+
+        if (buttonChoice === "OK") {
+            Lib.distribute(dimension, spacingString);
+
+            try {
+                [(Lib.command) setValue:spacingString forKey:"distributorSpacing" onLayer:Lib.page];
+                [(Lib.command) setValue:(String(dimension) === "Horizontally" ? 1 : 0) forKey:"distributorDimension" onLayer:Lib.page];
+            }
+            catch (err) {
+                log("Failed saving values, layer commands not supported?");
+            }
+        }
+    }
+    else {
+        log("No selection to distribute");
+        [(Lib.app) displayDialog:"No selection, no fun." withTitle:"Distributor is sad"];
+    }
+}
