@@ -4,15 +4,23 @@
     {
       "script" : "script.cocoascript",
       "handler" : "onRun",
-      "shortcut" : "",
-      "name" : "Distributor",
+      "shortcut" : "shift ctrl d",
+      "name" : "Distribute ...",
       "identifier" : "distributor"
+    },
+    {
+      "script" : "script.cocoascript",
+      "handler" : "onRepeat",
+      "shortcut" : "shift ctrl a",
+      "name" : "Distribute again",
+      "identifier" : "repeat"
     }
   ],
   "menu": {
-    "isRoot": true,
+    "isRoot": false,
     "items": [
-      "distributor"
+      "distributor",
+      "repeat"
     ]
   },
   "identifier" : "com.betterthantomorrow.sketch.distributor",
