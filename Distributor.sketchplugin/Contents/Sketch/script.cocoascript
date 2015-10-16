@@ -1,4 +1,4 @@
-var Lib = {
+var Distributor = {
     DEFAULT_SPACING: 10,
     spacing: null,
     DEFAULT_DIMENSION: 0,
@@ -51,7 +51,7 @@ var Lib = {
         var viewBox = [[NSBox alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
         [viewBox setTitle:""];
 
-        [viewBox addSubview:Lib.createLabel("Direction:", NSMakeRect(0,85,300, 20))];
+        [viewBox addSubview:Distributor.createLabel("Direction:", NSMakeRect(0,85,300, 20))];
 
         var prototype = [[NSButtonCell alloc] init];
         [prototype setButtonType:NSRadioButton];
@@ -67,7 +67,7 @@ var Lib = {
         [dimensionChoices selectCellAtRow:this.dimension column:0];
         [viewBox addSubview:dimensionChoices];
 
-        [viewBox addSubview:Lib.createLabel("Spacing:", NSMakeRect(0, 20, 300, 20))];
+        [viewBox addSubview:Distributor.createLabel("Spacing:", NSMakeRect(0, 20, 300, 20))];
 
         var spacingField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 100, 20)];
         [spacingField setStringValue:this.spacing];
@@ -123,30 +123,30 @@ var Lib = {
 
 
 var distributionHandler = function(context, callback) {
-    Lib.init(context);
-    if ([(Lib.selection) count] > 0) {
+    Distributor.init(context);
+    if ([(Distributor.selection) count] > 0) {
         callback();
     }
     else {
         log("No selection to distribute");
-        [(Lib.app) displayDialog:"No selection, no fun." withTitle:"Distributor is sad"];
+        [(Distributor.app) displayDialog:"No selection, no fun." withTitle:"Distributor is sad"];
     }
 }
 
 var onRun = function(context) {
     this.distributionHandler(context, function() {
-        var choices = Lib.createChoices('Distribute ' + [(Lib.selection) count] + ' objects'),
+        var choices = Distributor.createChoices('Distribute ' + [(Distributor.selection) count] + ' objects'),
             buttonChoice = choices[0] == 1000 ? "OK" : "Cancel",
             dimension = choices[1],
             spacingString = choices[2],
             spacing = null;
 
         if (buttonChoice === "OK") {
-            Lib.distribute(dimension, spacingString);
+            Distributor.distribute(dimension, spacingString);
 
             try {
-                [(Lib.command) setValue:spacingString forKey:"distributorSpacing" onLayer:Lib.page];
-                [(Lib.command) setValue:(String(dimension) === "Horizontally" ? 1 : 0) forKey:"distributorDimension" onLayer:Lib.page];
+                [(Distributor.command) setValue:spacingString forKey:"distributorSpacing" onLayer:Distributor.page];
+                [(Distributor.command) setValue:(String(dimension) === "Horizontally" ? 1 : 0) forKey:"distributorDimension" onLayer:Distributor.page];
             }
             catch (err) {
                 log("Failed saving values, layer commands not supported?");
@@ -157,6 +157,6 @@ var onRun = function(context) {
 
 var onRepeat = function(context) {
     this.distributionHandler(context, function() {
-        Lib.distribute(Lib.dimension == 1 ? "Horizontally" : "Vertically", Lib.spacing);
+        Distributor.distribute(Distributor.dimension == 1 ? "Horizontally" : "Vertically", Distributor.spacing);
     });
 }
