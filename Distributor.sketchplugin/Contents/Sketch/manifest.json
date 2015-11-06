@@ -4,14 +4,14 @@
     {
       "script" : "script.cocoascript",
       "handler" : "onRun",
-      "shortcut" : "shift ctrl d",
+      "shortcut" : "ctrl option d",
       "name" : "Distribute ...",
       "identifier" : "distributor"
     },
     {
       "script" : "script.cocoascript",
       "handler" : "onRepeat",
-      "shortcut" : "shift ctrl a",
+      "shortcut" : "ctrl option a",
       "name" : "Distribute again",
       "identifier" : "repeat"
     }
