@@ -1,6 +1,5 @@
 # SketchDistributor
 
-[![Join the chat at https://gitter.im/PEZ/SketchDistributor](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/PEZ/SketchDistributor?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Sketch plugin that distributes selected objects vertically or horizontally *with a specified spacing*.
 
 Like so:
@@ -25,5 +24,5 @@ Note that you can use negative spacing to get overlap. Like so (spacing: -14):
 
 Is the plugin misbehaving? File an issue. Have a suggestion? File an issue. You can pretty much file an issue for whatever reason. There is also:
 
-* A low-traffic chat room over at [gitter.im/PEZ/SketchDistributor](https://gitter.im/PEZ/SketchDistributor)
+* A low-traffic chat room over at [![Join the chat at https://gitter.im/PEZ/SketchDistributor](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/PEZ/SketchDistributor?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 * Twitter: [@CoBPEZ](https://twitter.com/cobpez)
