@@ -19,6 +19,9 @@ You select the objects you want to distribute, then ask Distributor to do it. Th
 Note that you can use negative spacing to get overlap. Like so (spacing: -14):
 ![Tabs distributed -14px](tabs.png "Using -14px")
 
-## Twitter
-[@CoBPEZ](https://twitter.com/cobpez)
+## Bugs / Comments / Questions / Suggestions
 
+Is the plugin misbehaving? File an issue. Have a suggestion? File an issue. You can pretty much file an issue for whatever reason. There is also:
+
+* A low-traffic chat room over at [gitter.im/PEZ/SketchDistributor](https://gitter.im/PEZ/SketchDistributor)
+* Twitter: [@CoBPEZ](https://twitter.com/cobpez)
