@@ -1,4 +1,6 @@
 # SketchDistributor
+
+[![Join the chat at https://gitter.im/PEZ/SketchDistributor](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/PEZ/SketchDistributor?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Sketch plugin that distributes selected objects vertically or horizontally *with a specified spacing*.
 
 Like so:
