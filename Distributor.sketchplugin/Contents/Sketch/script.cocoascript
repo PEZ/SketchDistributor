@@ -4,16 +4,22 @@ var Distributor = {
     DEFAULT_DIMENSION: 0,
     dimension: null,
 
-    app: null,
     selection: null,
     command: null,
     page: null,
     app: [NSApplication sharedApplication],
 
-    init: function(context) {
-        this.selection = context.selection;
-        this.command = context.command;
-        this.page = [(context.document) currentPage];
+    init: function(context, pluginID, commandID) {
+        // WORKAROUND - While Sketch 3.4 - 3.4.2 bug with using context, instead of this:
+        //this.selection = context.selection;
+        //this.command = context.command;
+        //this.page = [(context.document) currentPage];
+        // we do this:
+        var doc = NSDocumentController.sharedDocumentController().currentDocument() || NSDocumentController.sharedDocumentController().documents().firstObject();
+        this.command = NSApp.delegate().pluginManager().commandWithSpecifier(MSPluginCommandSpecifier.alloc().initWithPluginBundleIdentifier_commandIdentifier(pluginID, commandID));
+        this.selection = doc ? doc.findSelectedLayers() : nil;
+        this.page = [doc currentPage];
+        // END WORKAROUND
 
         try {
             this.spacing = [(this.command) valueForKey:"distributorSpacing" onLayer:this.page];
@@ -88,7 +94,6 @@ var Distributor = {
     },
 
     distribute: function(dimension, spacingString) {
-        log("distribute: " + [dimension, spacingString]);
         var sortedByLeft  = this.sortedArray(this.selection, "frame.left"),
         sortedByTop       = this.sortedArray(this.selection, "frame.top"),
         firstLeft         = sortedByLeft[0],
@@ -122,8 +127,8 @@ var Distributor = {
 };
 
 
-var distributionHandler = function(context, callback) {
-    Distributor.init(context);
+var distributionHandler = function(context, pluginID, commandID, callback) {
+    Distributor.init(context, pluginID, commandID);
     if ([(Distributor.selection) count] > 0) {
         callback();
     }
@@ -134,7 +139,7 @@ var distributionHandler = function(context, callback) {
 }
 
 var onRun = function(context) {
-    this.distributionHandler(context, function() {
+    this.distributionHandler(context, "com.betterthantomorrow.sketch.distributor", "distributor", function() {
         var choices = Distributor.createChoices('Distribute ' + [(Distributor.selection) count] + ' objects'),
             buttonChoice = choices[0] == 1000 ? "OK" : "Cancel",
             dimension = choices[1],
@@ -156,7 +161,7 @@ var onRun = function(context) {
 }
 
 var onRepeat = function(context) {
-    this.distributionHandler(context, function() {
+    this.distributionHandler(context, "com.betterthantomorrow.sketch.distributor", "repeat", function() {
         Distributor.distribute(Distributor.dimension == 1 ? "Horizontally" : "Vertically", Distributor.spacing);
     });
 }
