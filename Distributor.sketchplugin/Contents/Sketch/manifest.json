@@ -10,9 +10,23 @@
     },
     {
       "script" : "script.js",
+      "handler" : "onRunH",
+      "shortcut" : "ctrl option h",
+      "name" : "Distribute Horizontally ...",
+      "identifier" : "distributor-h"
+    },
+    {
+      "script" : "script.js",
+      "handler" : "onRunV",
+      "shortcut" : "ctrl option v",
+      "name" : "Distribute Vertically ...",
+      "identifier" : "distributor-v"
+    },
+    {
+      "script" : "script.js",
       "handler" : "onRepeat",
       "shortcut" : "ctrl option a",
-      "name" : "Distribute again",
+      "name" : "Distribute Again",
       "identifier" : "repeat"
     }
   ],
@@ -20,11 +34,13 @@
     "isRoot": false,
     "items": [
       "distributor",
+      "distributor-h",
+      "distributor-v",
       "repeat"
     ]
   },
   "identifier" : "com.betterthantomorrow.sketch.distributor",
-  "version" : "1.0.1.1",
+  "version" : "1.0.2",
   "description" : "Distribute selected objects vertically or horizontally with exact spacing.",
   "authorEmail" : "pez@pezius.com",
   "name" : "Distributor"

@@ -161,6 +161,30 @@ var onRun = function(context) {
     });
 }
 
+var onRunH = function(context) {
+    this.distributionHandler(context, "com.betterthantomorrow.sketch.distributor", "distributor-h", function() {
+        try {
+            [(Distributor.command) setValue:1 forKey:"distributorDimension" onLayer:Distributor.page];
+            onRun(context);
+        }
+        catch (err) {
+            log("Failed saving values, layer commands not supported?");
+        }
+    });
+}
+
+var onRunV = function(context) {
+    this.distributionHandler(context, "com.betterthantomorrow.sketch.distributor", "distributor-v", function() {
+        try {
+            [(Distributor.command) setValue:0 forKey:"distributorDimension" onLayer:Distributor.page];
+            onRun(context);
+        }
+        catch (err) {
+            log("Failed saving values, layer commands not supported?");
+        }
+    });
+}
+
 var onRepeat = function(context) {
     this.distributionHandler(context, "com.betterthantomorrow.sketch.distributor", "repeat", function() {
         Distributor.distribute(Distributor.dimension == 1 ? "Horizontally" : "Vertically", Distributor.spacing);
