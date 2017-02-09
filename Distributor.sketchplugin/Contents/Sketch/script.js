@@ -97,25 +97,26 @@ var Distributor = {
         var sortedByLeft  = this.sortedArray(this.selection, "frame.left"),
         sortedByTop       = this.sortedArray(this.selection, "frame.top"),
         firstLeft         = sortedByLeft[0],
-        firstTop          = sortedByTop[0],
         left              = [[firstLeft frame] left],
+        firstTop          = sortedByTop[0],
         top               = [[firstTop frame] top],
         formatter         = [[NSNumberFormatter alloc] init],
         spacing           = [formatter numberFromString:spacingString];
 
+        // @TODO: Find out how to get a trimmed bounding box for the the layer, instead of [layer rect]
         if (spacing != null) {
             if (String(dimension) === "Vertically") {
                 var loopV = [sortedByTop objectEnumerator];
                 while (layer = [loopV nextObject]) {
-                    [[layer frame] setTop:top];
-                    top = [[layer frame] top] + [[layer frame] height] + spacing;
+                    [[layer frame] setTop:(top + ([[layer frame] top] - CGRectGetMinY([layer rect])))];
+                    top = CGRectGetMinY([layer rect]) + CGRectGetHeight([layer rect]) + spacing;
                 });
             }
             else {
                 var loopH = [sortedByLeft objectEnumerator];
                 while (layer = [loopH nextObject]) {
-                    [[layer frame] setLeft:left];
-                    left = [[layer frame] left] + [[layer frame] width] + spacing;
+                    [[layer frame] setLeft:(left + ([[layer frame] left] - CGRectGetMinX([layer rect])))];
+                    left = CGRectGetMinX([layer rect]) + CGRectGetWidth([layer rect]) + spacing;
                 });
             }
         }
