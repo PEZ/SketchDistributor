@@ -97,8 +97,8 @@ var Distributor = {
         var sortedByLeft  = this.sortedArray(this.selection, "frame.left"),
         sortedByTop       = this.sortedArray(this.selection, "frame.top"),
         firstLeft         = sortedByLeft[0],
-        firstTop          = sortedByTop[0],
         left              = [[firstLeft frame] left],
+        firstTop          = sortedByTop[0],
         top               = [[firstTop frame] top],
         formatter         = [[NSNumberFormatter alloc] init],
         spacing           = [formatter numberFromString:spacingString];
@@ -107,15 +107,15 @@ var Distributor = {
             if (String(dimension) === "Vertically") {
                 var loopV = [sortedByTop objectEnumerator];
                 while (layer = [loopV nextObject]) {
-                    [[layer frame] setTop:top];
-                    top = [[layer frame] top] + [[layer frame] height] + spacing;
+                    [[layer frame] setTop:(top + ([[layer frame] top] - CGRectGetMinY([layer frameForTransforms])))];
+                    top = CGRectGetMinY([layer frameForTransforms]) + CGRectGetHeight([layer frameForTransforms]) + spacing;
                 });
             }
             else {
                 var loopH = [sortedByLeft objectEnumerator];
                 while (layer = [loopH nextObject]) {
-                    [[layer frame] setLeft:left];
-                    left = [[layer frame] left] + [[layer frame] width] + spacing;
+                    [[layer frame] setLeft:(left + ([[layer frame] left] - CGRectGetMinX([layer frameForTransforms])))];
+                    left = CGRectGetMinX([layer frameForTransforms]) + CGRectGetWidth([layer frameForTransforms]) + spacing;
                 });
             }
         }
