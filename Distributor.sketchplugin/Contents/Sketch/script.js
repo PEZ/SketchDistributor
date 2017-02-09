@@ -81,13 +81,13 @@ var Distributor = {
 
         [viewBox sizeToFit];
 
-        var alert = [[NSAlert alloc] init];
-        [alert setMessageText:msg];
-        [alert addButtonWithTitle:"OK"];
-        [alert addButtonWithTitle:"Cancel"];
-        [alert setAccessoryView:viewBox];
-
-        var responseCode = [alert runModal];
+        var alertBox = [[NSAlert alloc] init];
+        [alertBox setMessageText:msg];
+        [alertBox addButtonWithTitle:"OK"];
+        [alertBox addButtonWithTitle:"Cancel"];
+        [alertBox setAccessoryView:viewBox];
+        [[alertBox window] setInitialFirstResponder:spacingField];
+        var responseCode = [alertBox runModal];
 
         var dimension = [[dimensionChoices selectedCell] title];
         return [responseCode, dimension, [spacingField stringValue]];

@@ -2,14 +2,14 @@
   "author" : "Better Than Tomorrow",
   "commands" : [
     {
-      "script" : "script.cocoascript",
+      "script" : "script.js",
       "handler" : "onRun",
       "shortcut" : "ctrl option d",
       "name" : "Distribute ...",
       "identifier" : "distributor"
     },
     {
-      "script" : "script.cocoascript",
+      "script" : "script.js",
       "handler" : "onRepeat",
       "shortcut" : "ctrl option a",
       "name" : "Distribute again",
@@ -24,7 +24,7 @@
     ]
   },
   "identifier" : "com.betterthantomorrow.sketch.distributor",
-  "version" : "1.0",
+  "version" : "1.0.1",
   "description" : "Distribute selected objects vertically or horizontally with exact spacing.",
   "authorEmail" : "pez@pezius.com",
   "name" : "Distributor"

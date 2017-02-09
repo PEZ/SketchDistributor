@@ -8,7 +8,7 @@ Like so:
 
 ## Installation
 
-I recommend using [Sketch Toolbox](http://sketchtoolbox.com), but you can also download and unpack the [zip archive](https://github.com/PEZ/SketchDistributor/archive/master.zip) and then open `Distributor.sketchplugin`, Sketch will open it up and install the plugin for you. 
+I recommend using [Sketch Toolbox](http://sketchtoolbox.com), but you can also download and unpack the [zip archive](https://github.com/PEZ/SketchDistributor/archive/master.zip) and then open `Distributor.sketchplugin`, Sketch will open it up and install the plugin for you.
 
 ## How-to
 
@@ -25,4 +25,4 @@ Note that you can use negative spacing to get overlap. Like so (spacing: -14):
 Is the plugin misbehaving? File an issue. Have a suggestion? File an issue. You can pretty much file an issue for whatever reason. There is also:
 
 * A low-traffic chat room over at [![Join the chat at https://gitter.im/PEZ/SketchDistributor](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/PEZ/SketchDistributor?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-* Twitter: [@CoBPEZ](https://twitter.com/cobpez)
+* Twitter: [@PappaPEZ](https://twitter.com/pappapez)
