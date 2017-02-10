@@ -68,8 +68,8 @@ var Distributor = {
             numberOfRows:2
             numberOfColumns:1];
         var cellArray = [dimensionChoices cells];
-        [[cellArray objectAtIndex:0] setTitle:"Vertically"];
-        [[cellArray objectAtIndex:1] setTitle:"Horizontally"];
+        [[cellArray objectAtIndex:0] setTitle:"Horizontally"];
+        [[cellArray objectAtIndex:1] setTitle:"Vertically"];
         [dimensionChoices selectCellAtRow:this.dimension column:0];
         [viewBox addSubview:dimensionChoices];
 
@@ -152,7 +152,7 @@ var onRun = function(context) {
 
             try {
                 [(Distributor.command) setValue:spacingString forKey:"distributorSpacing" onLayer:Distributor.page];
-                [(Distributor.command) setValue:(String(dimension) === "Horizontally" ? 1 : 0) forKey:"distributorDimension" onLayer:Distributor.page];
+                [(Distributor.command) setValue:(String(dimension) === "Horizontally" ? 0 : 1) forKey:"distributorDimension" onLayer:Distributor.page];
             }
             catch (err) {
                 log("Failed saving values, layer commands not supported?");
@@ -164,7 +164,7 @@ var onRun = function(context) {
 var onRunH = function(context) {
     this.distributionHandler(context, "com.betterthantomorrow.sketch.distributor", "distributor-h", function() {
         try {
-            [(Distributor.command) setValue:1 forKey:"distributorDimension" onLayer:Distributor.page];
+            [(Distributor.command) setValue:0 forKey:"distributorDimension" onLayer:Distributor.page];
             onRun(context);
         }
         catch (err) {
@@ -176,7 +176,7 @@ var onRunH = function(context) {
 var onRunV = function(context) {
     this.distributionHandler(context, "com.betterthantomorrow.sketch.distributor", "distributor-v", function() {
         try {
-            [(Distributor.command) setValue:0 forKey:"distributorDimension" onLayer:Distributor.page];
+            [(Distributor.command) setValue:1 forKey:"distributorDimension" onLayer:Distributor.page];
             onRun(context);
         }
         catch (err) {

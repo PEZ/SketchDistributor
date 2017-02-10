@@ -12,12 +12,15 @@ I recommend using [Sketch Toolbox](http://sketchtoolbox.com), but you can also d
 
 ## How-to
 
-You select the objects you want to distribute, then ask Distributor to do it. There are two ”modes”:
+You select the objects you want to distribute, then ask Distributor to do it:
 
-1. *Distribute...* (`Shift + Control + D`) brings up a dialog box. You choose direction (vertically or horizontally) and spacing (in pixels).
-1. *Distribute again* (`Shift + Control + A`) applies the last used distribution settings on the selected objects.
+1. **Distribute Horizontally …** (<kbd>CTRL</kbd>+<kbd>OPTION</kbd>+<kbd>H</kbd>), brings up the Distributor dialog box with *horizontal* distribution preselected. You specify spacing (in pixels).
+1. **Distribute Vertically …** <kbd>CTRL</kbd>+<kbd>OPTION</kbd>+<kbd>V</kbd>, same as above for *vertical* distribution.
+1. **Distribute again** (kbd>CTRL</kbd>+<kbd>OPTION</kbd>+<kbd>A</kbd>) applies the last used distribution settings on the selected objects.
+1. **Distribute …** (kbd>CTRL</kbd>+<kbd>OPTION</kbd>+<kbd>D</kbd>), same dialog box as above, but it will remember the last distribution direction. (Mostly here for legacy reasons.)
 
-Note that you can use negative spacing to get overlap. Like so (spacing: -14):
+Note that you can use negative spacing to get overlap:
+
 ![Tabs distributed -14px](tabs.png "Using -14px")
 
 ## Bugs / Comments / Questions / Suggestions
