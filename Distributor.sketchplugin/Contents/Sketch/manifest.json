@@ -40,7 +40,7 @@
     ]
   },
   "identifier" : "com.betterthantomorrow.sketch.distributor",
-  "version" : "1.0.2.2",
+  "version" : "1.0.3",
   "description" : "Distribute selected objects vertically or horizontally with exact spacing.",
   "authorEmail" : "pez@pezius.com",
   "name" : "Distributor"

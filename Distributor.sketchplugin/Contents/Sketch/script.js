@@ -53,6 +53,10 @@ var Distributor = {
         return label;
     },
 
+    trimmedLayer: function(layer) {
+        return MSSliceTrimming.trimmedRectForLayerAncestry(MSImmutableLayerAncestry.ancestryWithMSLayer(layer));
+    },
+
     createChoices: function(msg) {
         var viewBox = [[NSBox alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
         [viewBox setTitle:""];
@@ -103,20 +107,19 @@ var Distributor = {
         formatter         = [[NSNumberFormatter alloc] init],
         spacing           = [formatter numberFromString:spacingString];
 
-        // @TODO: Find out how to get a trimmed bounding box for the the layer, instead of [layer rect]
         if (spacing != null) {
             if (String(dimension) === "Vertically") {
                 var loopV = [sortedByTop objectEnumerator];
                 while (layer = [loopV nextObject]) {
-                    [[layer frame] setTop:(top + ([[layer frame] top] - CGRectGetMinY([layer rect])))];
-                    top = CGRectGetMinY([layer rect]) + CGRectGetHeight([layer rect]) + spacing;
+                    [[layer frame] setTop:(top + ([[layer frame] top] - CGRectGetMinY(Distributor.trimmedLayer(layer))))];
+                    top = CGRectGetMinY(Distributor.trimmedLayer(layer)) + CGRectGetHeight(Distributor.trimmedLayer(layer)) + spacing;
                 });
             }
             else {
                 var loopH = [sortedByLeft objectEnumerator];
                 while (layer = [loopH nextObject]) {
-                    [[layer frame] setLeft:(left + ([[layer frame] left] - CGRectGetMinX([layer rect])))];
-                    left = CGRectGetMinX([layer rect]) + CGRectGetWidth([layer rect]) + spacing;
+                    [[layer frame] setLeft:(left + ([[layer frame] left] - CGRectGetMinX(Distributor.trimmedLayer(layer))))];
+                    left = CGRectGetMinX(Distributor.trimmedLayer(layer)) + CGRectGetWidth(Distributor.trimmedLayer(layer)) + spacing;
                 });
             }
         }
