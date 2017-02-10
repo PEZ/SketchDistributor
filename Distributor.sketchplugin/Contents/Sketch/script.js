@@ -54,7 +54,8 @@ var Distributor = {
     },
 
     trimmedLayer: function(layer) {
-        return MSSliceTrimming.trimmedRectForLayerAncestry(MSImmutableLayerAncestry.ancestryWithMSLayer(layer));
+        //return MSSliceTrimming.trimmedRectForLayerAncestry(MSImmutableLayerAncestry.ancestryWithMSLayer(layer));
+        return [layer rect]
     },
 
     createChoices: function(msg) {
