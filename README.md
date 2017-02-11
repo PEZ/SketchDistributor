@@ -25,10 +25,14 @@ Note that you can use negative spacing to get overlap:
 
 ## Bugs / Comments / Questions / Suggestions
 
-Is the plugin misbehaving? File an issue. Have a suggestion? File an issue. You can pretty much file an issue for whatever reason. There is also:
+Is the plugin misbehaving? File an issue. Have a suggestion? File an issue. You can pretty much file an issue for whatever reason. Please include the version of the plugin you are using if you think it could be relevant (it most often is). There is also:
 
 * A low-traffic chat room over at [![Join the chat at https://gitter.im/PEZ/SketchDistributor](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/PEZ/SketchDistributor?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 * Twitter: [@PappaPEZ](https://twitter.com/pappapez)
+
+### Known Issues
+
+The current version of the plugin will truncate any decimal points of the positions of the distributed objects. Say for instance that the leftmost layer in the selection is at X position `100.12` and you distribute horizontally with, say, `10` pixels. Then you would expect the following objects to be at `something.12` X positions after distribution, right? But they won't. They will be at `.0` X positions. I hope to be able to fix this issue soon. Most people use Sketch for pixel aligned stuff anyway, I think.
 
 ## Sketch Community Attention
 
