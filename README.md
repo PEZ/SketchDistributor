@@ -32,7 +32,7 @@ Is the plugin misbehaving? File an issue. Have a suggestion? File an issue. You 
 
 ### Known Issues
 
-The plugin can't help with distributing rotated layers correctly. See issue #10. Also some shapes have a strange bounding rectangle that makes them distribute less perfectly especially in vertical direction. Hoping for the Skatch API to soon make it possible to handle both this cases.
+The plugin can't help with distributing rotated layers correctly. See issue #10. Also some shapes have a strange bounding rectangle according to Sketch. That makes them distribute less perfectly especially in vertical direction. Hoping for the Sketch API to soon make it possible to handle both these cases.
 
 ## Sketch Community Attention
 

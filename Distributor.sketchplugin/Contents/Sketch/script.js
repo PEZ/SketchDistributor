@@ -7,6 +7,7 @@ var Distributor = {
     selection: null,
     command: null,
     page: null,
+    doc: null,
     app: [NSApplication sharedApplication],
 
     init: function(context, pluginID, commandID) {
@@ -15,10 +16,10 @@ var Distributor = {
         //this.command = context.command;
         //this.page = [(context.document) currentPage];
         // we do this:
-        var doc = NSDocumentController.sharedDocumentController().currentDocument() || NSDocumentController.sharedDocumentController().documents().firstObject();
+        this.doc = NSDocumentController.sharedDocumentController().currentDocument() || NSDocumentController.sharedDocumentController().documents().firstObject();
         this.command = NSApp.delegate().pluginManager().commandWithSpecifier(MSPluginCommandSpecifier.alloc().initWithPluginBundleIdentifier_commandIdentifier(pluginID, commandID));
-        this.selection = doc ? doc.findSelectedLayers() : nil;
-        this.page = [doc currentPage];
+        this.selection = this.doc ? this.doc.findSelectedLayers() : nil;
+        this.page = this.doc.currentPage();
         // END WORKAROUND
 
         try {
@@ -61,9 +62,16 @@ var Distributor = {
         layer.frame().setX(layer.frame().x() + xOffset);
     },
 
-    trimmedLayer: function(layer) {
+    trimmedRectForLayer: function(layer) {
+        // @TODO: To correctly handle rotated layers and many shapes and groups
+        // we need to find a trimmer rect for the bounding box. So far no luck and we
+        // use a less optimal path of using the layer.frame rect, which is not trimmed.
+        // At first it seemed like trimmedRectForLayerAncestry worked but it is very
+        // inextact and truncates decimal points of the origin and size structs.
         //return MSSliceTrimming.trimmedRectForLayerAncestry(MSImmutableLayerAncestry.ancestryWithMSLayer(layer));
-        return [layer rect]
+        //return MSSliceTrimming.simpleSafeRectFromLayerAncestry(MSImmutableLayerAncestry.ancestryWithMSLayer(layer));
+        return [[layer frame] rect];
+        //return [[[MSLayerFlattener alloc] init] trimmedRectFromLayers:[MSLayerArray arrayWithLayers:Array(layer)] immutablePage:Distributor.page immutableDoc:Distributor.doc];
     },
 
     createChoices: function(msg) {
@@ -107,28 +115,40 @@ var Distributor = {
     },
 
     distribute: function(dimension, spacingString) {
-        var sortedByLeft  = this.sortedArray(this.selection, "frame.left"),
-        sortedByTop       = this.sortedArray(this.selection, "frame.top"),
-        firstLeft         = sortedByLeft[0],
-        left              = [[firstLeft frame] left],
-        firstTop          = sortedByTop[0],
-        top               = [[firstTop frame] top],
-        formatter         = [[NSNumberFormatter alloc] init],
-        spacing           = [formatter numberFromString:spacingString];
+        var formatter = [[NSNumberFormatter alloc] init],
+            spacing   = [formatter numberFromString:spacingString];
 
         if (spacing != null) {
-            if (String(dimension) === "Vertically") {
-                var loopV = [sortedByTop objectEnumerator];
-                while (layer = [loopV nextObject]) {
-                    [[layer frame] setTop:(top + ([[layer frame] top] - CGRectGetMinY(Distributor.trimmedLayer(layer))))];
-                    top = CGRectGetMinY(Distributor.trimmedLayer(layer)) + CGRectGetHeight(Distributor.trimmedLayer(layer)) + spacing;
+            if (String(dimension) == "Horizontally") {
+                var sortedByLeft      = this.sortedArray(this.selection, "frame.left"),
+                    loopH             = [sortedByLeft objectEnumerator]
+                    firstH            = [loopH nextObject],
+                    trimmedLayerRect  = Distributor.trimmedRectForLayer(firstH),
+                    trimmedLeft       = CGRectGetMinX(trimmedLayerRect),
+                    lastTrimmedRight  = trimmedLeft + CGRectGetWidth(trimmedLayerRect);
+                while (layer = [loopH nextObject]) {
+                    trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
+                    trimmedLeft = CGRectGetMinX(trimmedLayerRect);
+                    Distributor.offsetLayerX(layer, lastTrimmedRight - trimmedLeft + spacing);
+                    trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
+                    trimmedLeft = CGRectGetMinX(trimmedLayerRect);
+                    lastTrimmedRight = trimmedLeft + CGRectGetWidth(trimmedLayerRect);
                 });
             }
             else {
-                var loopH = [sortedByLeft objectEnumerator];
-                while (layer = [loopH nextObject]) {
-                    [[layer frame] setLeft:(left + ([[layer frame] left] - CGRectGetMinX(Distributor.trimmedLayer(layer))))];
-                    left = CGRectGetMinX(Distributor.trimmedLayer(layer)) + CGRectGetWidth(Distributor.trimmedLayer(layer)) + spacing;
+                var sortedByTop       = this.sortedArray(this.selection, "frame.top"),
+                    loopV             = [sortedByTop objectEnumerator]
+                    firstV            = [loopV nextObject],
+                    trimmedLayerRect  = Distributor.trimmedRectForLayer(firstV),
+                    trimmedTop        = CGRectGetMinY(trimmedLayerRect),
+                    lastTrimmedBottom = trimmedTop + CGRectGetHeight(trimmedLayerRect);
+                while (layer = [loopV nextObject]) {
+                    trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
+                    trimmedTop = CGRectGetMinY(trimmedLayerRect);
+                    Distributor.offsetLayerY(layer, lastTrimmedBottom - trimmedTop + spacing);
+                    trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
+                    trimmedTop = CGRectGetMinY(trimmedLayerRect);
+                    lastTrimmedBottom = trimmedTop + CGRectGetHeight(trimmedLayerRect);
                 });
             }
         }
