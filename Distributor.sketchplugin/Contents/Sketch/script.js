@@ -61,8 +61,9 @@ var Distributor = {
         layer.frame().setX(layer.frame().x() + xOffset);
     },
 
-    trimmedRectForLayer: function(layer) {
-        return MSSliceTrimming.trimmedRectForLayerAncestry(MSImmutableLayerAncestry.ancestryWithMSLayer(layer));
+    trimmedLayer: function(layer) {
+        //return MSSliceTrimming.trimmedRectForLayerAncestry(MSImmutableLayerAncestry.ancestryWithMSLayer(layer));
+        return [layer rect]
     },
 
     createChoices: function(msg) {
@@ -106,40 +107,28 @@ var Distributor = {
     },
 
     distribute: function(dimension, spacingString) {
-        var formatter = [[NSNumberFormatter alloc] init],
-            spacing   = [formatter numberFromString:spacingString];
+        var sortedByLeft  = this.sortedArray(this.selection, "frame.left"),
+        sortedByTop       = this.sortedArray(this.selection, "frame.top"),
+        firstLeft         = sortedByLeft[0],
+        left              = [[firstLeft frame] left],
+        firstTop          = sortedByTop[0],
+        top               = [[firstTop frame] top],
+        formatter         = [[NSNumberFormatter alloc] init],
+        spacing           = [formatter numberFromString:spacingString];
 
         if (spacing != null) {
-            if (String(dimension) == "Horizontally") {
-                var sortedByLeft      = this.sortedArray(this.selection, "frame.left"),
-                    loopH             = [sortedByLeft objectEnumerator]
-                    firstH            = [loopH nextObject],
-                    trimmedLayerRect  = Distributor.trimmedRectForLayer(firstH),
-                    trimmedLeft       = CGRectGetMinX(trimmedLayerRect),
-                    lastTrimmedRight  = trimmedLeft + CGRectGetWidth(trimmedLayerRect);
-                while (layer = [loopH nextObject]) {
-                    trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
-                    trimmedLeft = CGRectGetMinX(trimmedLayerRect);
-                    Distributor.offsetLayerX(layer, lastTrimmedRight - trimmedLeft + spacing);
-                    trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
-                    trimmedLeft = CGRectGetMinX(trimmedLayerRect);
-                    lastTrimmedRight = trimmedLeft + CGRectGetWidth(trimmedLayerRect);
+            if (String(dimension) === "Vertically") {
+                var loopV = [sortedByTop objectEnumerator];
+                while (layer = [loopV nextObject]) {
+                    [[layer frame] setTop:(top + ([[layer frame] top] - CGRectGetMinY(Distributor.trimmedLayer(layer))))];
+                    top = CGRectGetMinY(Distributor.trimmedLayer(layer)) + CGRectGetHeight(Distributor.trimmedLayer(layer)) + spacing;
                 });
             }
             else {
-                var sortedByTop       = this.sortedArray(this.selection, "frame.top"),
-                    loopV             = [sortedByTop objectEnumerator]
-                    firstV            = [loopV nextObject],
-                    trimmedLayerRect  = Distributor.trimmedRectForLayer(firstV),
-                    trimmedTop        = CGRectGetMinY(trimmedLayerRect),
-                    lastTrimmedBottom = trimmedTop + CGRectGetHeight(trimmedLayerRect);
-                while (layer = [loopV nextObject]) {
-                    trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
-                    trimmedTop = CGRectGetMinY(trimmedLayerRect);
-                    Distributor.offsetLayerY(layer, lastTrimmedBottom - trimmedTop + spacing);
-                    trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
-                    trimmedTop = CGRectGetMinY(trimmedLayerRect);
-                    lastTrimmedBottom = trimmedTop + CGRectGetHeight(trimmedLayerRect);
+                var loopH = [sortedByLeft objectEnumerator];
+                while (layer = [loopH nextObject]) {
+                    [[layer frame] setLeft:(left + ([[layer frame] left] - CGRectGetMinX(Distributor.trimmedLayer(layer))))];
+                    left = CGRectGetMinX(Distributor.trimmedLayer(layer)) + CGRectGetWidth(Distributor.trimmedLayer(layer)) + spacing;
                 });
             }
         }
