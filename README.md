@@ -32,7 +32,7 @@ Is the plugin misbehaving? File an issue. Have a suggestion? File an issue. You 
 
 ### Known Issues
 
-The current version of the plugin will truncate any decimal points of the positions of the distributed objects. Say for instance that the leftmost layer in the selection is at X position `100.12` and you distribute horizontally with, say, `10` pixels. Then you would expect the following objects to be at `something.12` X positions after distribution, right? But they won't. They will be at `.0` X positions. I hope to be able to fix this issue soon. Most people use Sketch for pixel aligned stuff anyway, I think.
+The plugin can't help with distributing rotated layers correctly. See issue #10. Also some shapes have a strange bounding rectangle that makes them distribute less perfectly especially in vertical direction. Hoping for the Skatch API to soon make it possible to handle both this cases.
 
 ## Sketch Community Attention
 
