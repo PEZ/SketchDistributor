@@ -6,6 +6,8 @@
       "handler" : "onRun",
       "shortcut" : "ctrl option d",
       "name" : "Distribute…",
+      "description" : "Distribute the selected layers horizontally or vertically with a fixed distance.",
+      "icon" : "icons/distribute.png",
       "identifier" : "distributor"
     },
     {
@@ -13,6 +15,8 @@
       "handler" : "onRunH",
       "shortcut" : "ctrl option h",
       "name" : "Distribute Horizontally…",
+      "description" : "Distribute the selected layers horizontally with a fixed distance.",
+      "icon" : "icons/horizontal.png",
       "identifier" : "distributor-h"
     },
     {
@@ -20,6 +24,8 @@
       "handler" : "onRunV",
       "shortcut" : "ctrl option v",
       "name" : "Distribute Vertically…",
+      "description" : "Distribute the selected layers vertically with a fixed distance.",
+      "icon" : "icons/vertical.png",
       "identifier" : "distributor-v"
     },
     {
@@ -27,6 +33,8 @@
       "handler" : "onRepeat",
       "shortcut" : "ctrl option a",
       "name" : "Distribute Again",
+      "description" : "Distribute the selected layers in the same direction and the same distance as last time you distributed.",
+      "icon" : "icons/again.png",
       "identifier" : "repeat"
     }
   ],

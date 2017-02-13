@@ -27,6 +27,12 @@ Note that you can use negative spacing to get overlap:
 
 (<kbd>CTRL</kbd>+<kbd>OPTION</kbd>+<kbd>H</kbd>, `-14`, <kbd>⮐</kbd>)
 
+### It Works with Runner
+
+If you are using the amzing [Runner](http://sketchrunner.com) plugin you can also access the Distributor commands from there:
+
+![Runner Screenshot](runner-screenshot.png "The Distributor commands in Runner")
+
 ## Bugs / Comments / Questions / Suggestions
 
 Is the plugin misbehaving? File an issue. Have a suggestion? File an issue. You can pretty much file an issue for whatever reason. Please include the version of the plugin you are using if you think it could be relevant (it most often is). There is also:
