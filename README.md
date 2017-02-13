@@ -19,9 +19,13 @@ You select the objects you want to distribute, then ask Distributor to do it:
 1. **Distribute again** (<kbd>CTRL</kbd>+<kbd>OPTION</kbd>+<kbd>A</kbd>) applies the last used distribution settings on the selected objects.
 1. **Distribute …** (<kbd>CTRL</kbd>+<kbd>OPTION</kbd>+<kbd>D</kbd>), same dialog box as above, remembering the last distribution direction. (Mostly here for legacy reasons.)
 
+The distribution depicted above you get by typing <kbd>CTRL</kbd>+<kbd>OPTION</kbd>+<kbd>V</kbd>, `10`, <kbd>⮐</kbd>. Your fingers can stay on the keyboard.
+
 Note that you can use negative spacing to get overlap:
 
 ![Tabs distributed -14px](tabs.png "Using -14px")
+
+(<kbd>CTRL</kbd>+<kbd>OPTION</kbd>+<kbd>H</kbd>, `-14`, <kbd>⮐</kbd>)
 
 ## Bugs / Comments / Questions / Suggestions
 
