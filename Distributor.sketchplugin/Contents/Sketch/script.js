@@ -219,6 +219,6 @@ var onRunV = function(context) {
 
 var onRepeat = function(context) {
     this.distributionHandler(context, "com.betterthantomorrow.sketch.distributor", "repeat", function() {
-        Distributor.distribute(Distributor.dimension == 1 ? "Horizontally" : "Vertically", Distributor.spacing);
+        Distributor.distribute(Distributor.dimension == 0 ? "Horizontally" : "Vertically", Distributor.spacing);
     });
 }
