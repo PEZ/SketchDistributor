@@ -29,9 +29,11 @@ Note that you can use negative spacing to get overlap:
 
 ### It Works with Runner
 
-If you are using the amzing [Runner](http://sketchrunner.com) plugin you can also access the Distributor commands from there:
+If you are using the amazing [Runner](http://bit.ly/SketchRunnerWebsite) plugin you can also access the Distributor commands from there:
 
 ![Runner Screenshot](runner-screenshot.png "The Distributor commands in Runner")
+
+![Runner Badge](http://sketchrunner.com/img/badge_blue.png "Works with Sketch Runner")
 
 ## Bugs / Comments / Questions / Suggestions
 
