@@ -11,16 +11,9 @@ var Distributor = {
     app: [NSApplication sharedApplication],
 
     init: function(context, pluginID, commandID) {
-        // WORKAROUND - While Sketch 3.4 - 3.4.2 bug with using context, instead of this:
-        //this.selection = context.selection;
-        //this.command = context.command;
-        //this.page = [(context.document) currentPage];
-        // we do this:
-        this.doc = NSDocumentController.sharedDocumentController().currentDocument() || NSDocumentController.sharedDocumentController().documents().firstObject();
-        this.command = NSApp.delegate().pluginManager().commandWithSpecifier(MSPluginCommandSpecifier.alloc().initWithPluginBundleIdentifier_commandIdentifier(pluginID, commandID));
-        this.selection = this.doc ? this.doc.findSelectedLayers() : nil;
-        this.page = this.doc.currentPage();
-        // END WORKAROUND
+        this.selection = context.selection;
+        this.command = context.command;
+        this.page = [(context.document) currentPage];
 
         try {
             this.spacing = [(this.command) valueForKey:"distributorSpacing" onLayer:this.page];
