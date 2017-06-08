@@ -1,1 +1,3 @@
 *.swp
+.vscode/
+settings.json
