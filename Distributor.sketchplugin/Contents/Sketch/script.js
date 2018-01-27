@@ -109,7 +109,8 @@ var Distributor = {
 
     distribute: function(dimension, spacingString) {
         var formatter = [[NSNumberFormatter alloc] init],
-            spacing   = [formatter numberFromString:spacingString];
+            spacing   = [formatter numberFromString:spacingString]
+            layer = null;
 
         if (spacing != null) {
             if (String(dimension) == "Horizontally") {
@@ -126,7 +127,7 @@ var Distributor = {
                     trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
                     trimmedLeft = CGRectGetMinX(trimmedLayerRect);
                     lastTrimmedRight = trimmedLeft + CGRectGetWidth(trimmedLayerRect);
-                });
+                }
             }
             else {
                 var sortedByTop       = this.sortedArray(this.selection, "frame.top"),
@@ -142,8 +143,9 @@ var Distributor = {
                     trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
                     trimmedTop = CGRectGetMinY(trimmedLayerRect);
                     lastTrimmedBottom = trimmedTop + CGRectGetHeight(trimmedLayerRect);
-                });
+                };
             }
+            this.selection[0].parentGroup().layerDidEndResize();
         }
         else {
             log("Wrong number format for spacing: " + spacingString);
