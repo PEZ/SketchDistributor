@@ -1,5 +1,7 @@
 # SketchDistributor
 
+[![GitHub release](https://img.shields.io/badge/Works%20with-Sketch%20Runner-blue.svg?colorB=308ADF)](http://bit.ly/SketchRunnerWebsite)
+
 A [Sketch](https://sketchapp.com) plugin that distributes selected objects vertically or horizontally *with a specified spacing*.
 
 Like so:
@@ -8,7 +10,15 @@ Like so:
 
 ## Installation
 
-I recommend using [Sketch Toolbox](http://sketchtoolbox.com), but you can also download and unpack the [zip archive](https://github.com/PEZ/SketchDistributor/archive/master.zip) and then open `Distributor.sketchplugin`, Sketch will then open and install the plugin for you.
+[![Install Distributor with Sketchpacks](https://sketchpacks-com.s3.amazonaws.com/assets/badges/sketchpacks-badge-install.png "Install Distributor with Sketchpacks")](https://sketchpacks.com/PEZ/SketchDistributor/install)
+
+Or if you use [Runner](https://bit.ly/SketchRunnerWebsite), it can install this plugin as well.
+
+Or, do it manually:
+
+1. Download [this zip archive](https://github.com/PEZ/SketchDistributor/archive/master.zip)
+2. Unzip
+3. Double-click the `.sketchplugin` package.
 
 ## How-to
 
@@ -29,18 +39,15 @@ Note that you can use negative spacing to get overlap:
 
 ### It Works with Runner
 
-If you are using the amazing [Runner](http://bit.ly/SketchRunnerWebsite) plugin you can also access the Distributor commands from there:
+If you are using the amazing [Runner](https://bit.ly/SketchRunnerWebsite) plugin you can also access the Distributor commands from there:
 
 ![Runner Screenshot](runner-screenshot.png "The Distributor commands in Runner")
 
-![Runner Badge](http://sketchrunner.com/img/badge_blue.png "Works with Sketch Runner")
+![Runner Badge](https://sketchrunner.com/img/badge_blue.png "Works with Sketch Runner")
 
 ## Bugs / Comments / Questions / Suggestions
 
-Is the plugin misbehaving? File an issue. Have a suggestion? File an issue. You can pretty much file an issue for whatever reason. Please include the version of the plugin you are using if you think it could be relevant (it most often is). There is also:
-
-* A low-traffic chat room over at [![Join the chat at https://gitter.im/PEZ/SketchDistributor](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/PEZ/SketchDistributor?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-* Twitter: [@PappaPEZ](https://twitter.com/pappapez)
+Is the plugin misbehaving? File an issue. Have a suggestion? File an issue. You can pretty much file an issue for whatever reason. Please include the version of the plugin you are using if you think it could be relevant (it most often is). There is also Twitter [@PappaPEZ](https://twitter.com/pappapez)
 
 ### Known Issues
 
@@ -50,6 +57,7 @@ The plugin can't help with distributing rotated layers correctly. See issue #10.
 
 This little plugin is surprisingly often present in various **Top X Sketch Productivity plugins** articles. Too many to list here, but here are a few that got me smiling and almost bursting:
 
+* It makes it into Mochplus' [10 Best Sketch Plugins for UX/UI Designers in 2018](https://www.mockplus.com/blog/post/best-sketch-plugins-for-ui-ux-designers)
 * SketchDistributor snatches the #1 spot in [The ultimate Sketch plugins list for productivity in 2017](https://blog.prototypr.io/the-ultimate-list-that-you-need-of-plugins-for-sketch-fb59d4dedb87#.h0ya2d8ib) by Andrea Pacheco.
 * It is mentioned as a valuable tool in Yaroslav Zubko's excellent piece, [A Practical Guide To Convert Your Sketches To Working Prototypes](https://stories.uplabs.com/a-practical-guide-to-convert-your-sketches-to-working-prototypes-5b1a732d1eb5#.t5cry3g8x).
 * [LevelUpTuts](https://www.youtube.com/channel/UCyU5wkjgQYGRB0hIHMwm2Sg) made a video showing how SketchDistributor can [improve the workflow](https://www.youtube.com/watch?v=BzZKMQe1qQk). (The plugin is a few steps improved on the workflow support since.)
