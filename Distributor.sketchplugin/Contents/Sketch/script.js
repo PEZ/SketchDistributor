@@ -89,9 +89,16 @@ var Distributor = {
 
         [viewBox addSubview:Distributor.createLabel("Spacing:", NSMakeRect(0, 20, 300, 20))];
 
-        var spacingField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 100, 20)];
+        var spacingField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 70, 20)];
         [spacingField setStringValue:this.spacing];
         [viewBox addSubview:spacingField];
+
+        var centerSpacingCheckbox = [[NSButton alloc] initWithFrame:NSMakeRect(80, 0, 180, 20)];
+		  centerSpacingCheckbox.setState(false);
+		  centerSpacingCheckbox.setButtonType(NSSwitchButton);
+		  centerSpacingCheckbox.setBezelStyle(0);
+		  centerSpacingCheckbox.setTitle("Space between centers");
+        [viewBox addSubview:centerSpacingCheckbox];
 
         [viewBox sizeToFit];
 
@@ -104,10 +111,12 @@ var Distributor = {
         var responseCode = [alertBox runModal];
 
         var dimension = [[dimensionChoices selectedCell] title];
-        return [responseCode, dimension, [spacingField stringValue]];
+        var centerSpacing = [centerSpacingCheckbox state] == NSOnState;
+
+        return [responseCode, dimension, [spacingField stringValue], centerSpacingCheckbox.state()];
     },
 
-    distribute: function(dimension, spacingString) {
+    distribute: function(dimension, spacingString, centerSpacing) {
         var formatter = [[NSNumberFormatter alloc] init],
             spacing   = [formatter numberFromString:spacingString]
             layer = null;
@@ -120,13 +129,19 @@ var Distributor = {
                     trimmedLayerRect  = Distributor.trimmedRectForLayer(firstH),
                     trimmedLeft       = CGRectGetMinX(trimmedLayerRect),
                     lastTrimmedRight  = trimmedLeft + CGRectGetWidth(trimmedLayerRect);
+                    lastCenter        = trimmedLeft + (CGRectGetWidth(trimmedLayerRect) / 2);
                 while (layer = [loopH nextObject]) {
                     trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
                     trimmedLeft = CGRectGetMinX(trimmedLayerRect);
-                    Distributor.offsetLayerX(layer, lastTrimmedRight - trimmedLeft + spacing);
+                    if (centerSpacing) {
+                    	layer.frame().setX(lastCenter + spacing - (CGRectGetWidth(trimmedLayerRect) / 2));
+                    } else {
+                    	Distributor.offsetLayerX(layer, lastTrimmedRight - trimmedLeft + spacing);
+                    }
                     trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
                     trimmedLeft = CGRectGetMinX(trimmedLayerRect);
                     lastTrimmedRight = trimmedLeft + CGRectGetWidth(trimmedLayerRect);
+                    lastCenter = trimmedLeft + (CGRectGetWidth(trimmedLayerRect) / 2);
                 }
             }
             else {
@@ -136,13 +151,19 @@ var Distributor = {
                     trimmedLayerRect  = Distributor.trimmedRectForLayer(firstV),
                     trimmedTop        = CGRectGetMinY(trimmedLayerRect),
                     lastTrimmedBottom = trimmedTop + CGRectGetHeight(trimmedLayerRect);
+                    lastCenter        = trimmedTop + (CGRectGetHeight(trimmedLayerRect) / 2);
                 while (layer = [loopV nextObject]) {
                     trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
                     trimmedTop = CGRectGetMinY(trimmedLayerRect);
-                    Distributor.offsetLayerY(layer, lastTrimmedBottom - trimmedTop + spacing);
+                    if (centerSpacing) {
+                    	layer.frame().setY(lastCenter + spacing - (CGRectGetHeight(trimmedLayerRect) / 2));
+                    } else {
+                    	Distributor.offsetLayerY(layer, lastTrimmedBottom - trimmedTop + spacing);
+                    }
                     trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
                     trimmedTop = CGRectGetMinY(trimmedLayerRect);
                     lastTrimmedBottom = trimmedTop + CGRectGetHeight(trimmedLayerRect);
+                    lastCenter        = trimmedTop + (CGRectGetHeight(trimmedLayerRect) / 2);
                 };
             }
             this.selection[0].parentGroup().layerDidEndResize();
@@ -172,10 +193,11 @@ var onRun = function(context) {
             buttonChoice = choices[0] == 1000 ? "OK" : "Cancel",
             dimension = choices[1],
             spacingString = choices[2],
+            centerSpacing = choices[3],
             spacing = null;
 
         if (buttonChoice === "OK") {
-            Distributor.distribute(dimension, spacingString);
+            Distributor.distribute(dimension, spacingString, centerSpacing);
 
             try {
                 [(Distributor.command) setValue:spacingString forKey:"distributorSpacing" onLayer:Distributor.page];
