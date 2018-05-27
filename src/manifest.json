@@ -1,0 +1,56 @@
+{
+  "author": "Better Than Tomorrow",
+  "commands": [
+    {
+      "script": "script.js",
+      "handler": "onRun",
+      "shortcut": "ctrl option d",
+      "name": "Distribute…",
+      "description": "Distribute the selected layers horizontally or vertically with a fixed distance.",
+      "icon": "icons/distribute.png",
+      "identifier": "distributor"
+    },
+    {
+      "script": "script.js",
+      "handler": "onRunH",
+      "shortcut": "ctrl option h",
+      "name": "Distribute Horizontally…",
+      "description": "Distribute the selected layers horizontally with a fixed distance.",
+      "icon": "icons/horizontal.png",
+      "identifier": "distributor-h"
+    },
+    {
+      "script": "script.js",
+      "handler": "onRunV",
+      "shortcut": "ctrl option v",
+      "name": "Distribute Vertically…",
+      "description": "Distribute the selected layers vertically with a fixed distance.",
+      "icon": "icons/vertical.png",
+      "identifier": "distributor-v"
+    },
+    {
+      "script": "script.js",
+      "handler": "onRepeat",
+      "shortcut": "ctrl option a",
+      "name": "Distribute Again",
+      "description": "Distribute the selected layers in the same direction and the same distance as last time you distributed.",
+      "icon": "icons/again.png",
+      "identifier": "repeat"
+    }
+  ],
+  "menu": {
+    "isRoot": false,
+    "items": [
+      "distributor-h",
+      "distributor-v",
+      "repeat",
+      "distributor"
+    ]
+  },
+  "identifier": "com.betterthantomorrow.sketch.distributor",
+  "version": "1.2.1",
+  "description": "Distribute selected objects vertically or horizontally with exact spacing.",
+  "authorEmail": "pez@pezius.com",
+  "name": "Distributor",
+  "appcast": "https://raw.githubusercontent.com/PEZ/SketchDistributor/master/appcast.xml"
+}

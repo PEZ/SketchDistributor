@@ -1,0 +1,251 @@
+var Distributor = {
+    DEFAULT_SPACING: 10,
+    spacing: null,
+    DEFAULT_DIMENSION: 0,
+    dimension: null,
+    DEFAULT_CENTER_SPACING: false,
+    centerSpacing: null,
+    selection: null,
+    command: null,
+    page: null,
+    doc: null,
+    app: [NSApplication sharedApplication],
+
+    init: function (context, pluginID, commandID) {
+        this.selection = context.selection;
+        this.command = context.command;
+        this.page = [(context.document) currentPage];
+
+        try {
+            this.spacing = [(this.command) valueForKey: "distributorSpacing" onLayer: this.page];
+            this.dimension = [(this.command) valueForKey: "distributorDimension" onLayer: this.page];
+            this.centerSpacing = [(this.command) valueForKey: "distributorCenterSpacing" onLayer: this.page];
+        }
+        catch (err) {
+            log("Failed fetching cashed values, layer commands not supported?");
+        }
+        if (this.spacing == null) {
+            this.spacing = this.DEFAULT_SPACING;
+        }
+        if (this.dimension == null || (this.dimension != 0 && this.dimension != 1)) {
+            this.dimension = this.DEFAULT_DIMENSION;
+        }
+        if (this.centerSpacing == null) {
+            this.centerSpacing = this.DEFAULT_CENTER_SPACING;
+        }
+        log("foo");
+        //log("centerSpacing:  [" + this.centerSpacing + "]");
+    },
+
+    sortedArray: function (arr, sortDescriptorKey) {
+        var sortDescriptor = [NSSortDescriptor sortDescriptorWithKey: sortDescriptorKey ascending: 1];
+        var sorted = [arr sortedArrayUsingDescriptors: [sortDescriptor]];
+        return sorted;
+    },
+
+    createLabel: function (text, frame) {
+        var label = [[NSTextField alloc] initWithFrame: frame];
+        [label setStringValue: text];
+        [label setFont: [NSFont boldSystemFontOfSize: 12]];
+        [label setBezeled: false];
+        [label setDrawsBackground: false];
+        [label setEditable: false];
+        [label setSelectable: false];
+        return label;
+    },
+
+    offsetLayerY: function (layer, yOffset) {
+        layer.frame().setY(layer.frame().y() + yOffset);
+    },
+
+    offsetLayerX: function (layer, xOffset) {
+        layer.frame().setX(layer.frame().x() + xOffset);
+    },
+
+    trimmedRectForLayer: function (layer) {
+        // @TODO: To correctly handle rotated layers and many shapes and groups
+        // we need to find a trimmer rect for the bounding box. So far no luck and we
+        // use a less optimal path of using the layer.frame rect, which is not trimmed.
+        // At first it seemed like trimmedRectForLayerAncestry worked but it is very
+        // inextact and truncates decimal points of the origin and size structs.
+        //return MSSliceTrimming.trimmedRectForLayerAncestry(MSImmutableLayerAncestry.ancestryWithMSLayer(layer));
+        //return MSSliceTrimming.simpleSafeRectFromLayerAncestry(MSImmutableLayerAncestry.ancestryWithMSLayer(layer));
+        return [[layer frame] rect];
+        //return [[[MSLayerFlattener alloc] init] trimmedRectFromLayers:[MSLayerArray arrayWithLayers:Array(layer)] immutablePage:Distributor.page immutableDoc:Distributor.doc];
+    },
+
+    createChoices: function (msg) {
+        var viewBox = [[NSBox alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
+        [viewBox setTitle: ""];
+
+        [viewBox addSubview: Distributor.createLabel("Direction:", NSMakeRect(0, 85, 300, 20))];
+
+        var prototype = [[NSButtonCell alloc] init];
+        [prototype setButtonType: NSRadioButton];
+        [prototype setTitle: "---------------------------------------------"];
+        var dimensionChoices = [[NSMatrix alloc] initWithFrame: NSMakeRect(0, 45, 300, 40)
+            mode: NSRadioModeMatrix
+            prototype: prototype
+            numberOfRows: 2
+            numberOfColumns: 1];
+        var cellArray = [dimensionChoices cells];
+        [[cellArray objectAtIndex: 0] setTitle: "Horizontally"];
+        [[cellArray objectAtIndex: 1] setTitle: "Vertically"];
+        [dimensionChoices selectCellAtRow: this.dimension column: 0];
+        [viewBox addSubview: dimensionChoices];
+
+        [viewBox addSubview: Distributor.createLabel("Spacing:", NSMakeRect(0, 20, 300, 20))];
+
+        var spacingField = [[NSTextField alloc] initWithFrame: NSMakeRect(0, 0, 70, 20)];
+        [spacingField setStringValue: this.spacing];
+        [viewBox addSubview: spacingField];
+
+        var centerSpacingCheckbox = [[NSButton alloc] initWithFrame: NSMakeRect(80, 0, 180, 20)];
+        centerSpacingCheckbox.setState(this.centerSpacing);
+        centerSpacingCheckbox.setButtonType(NSSwitchButton);
+        centerSpacingCheckbox.setBezelStyle(0);
+        centerSpacingCheckbox.setTitle("Space between centers");
+        [viewBox addSubview: centerSpacingCheckbox];
+
+        [viewBox sizeToFit];
+
+        var alertBox = [[NSAlert alloc] init];
+        [alertBox setMessageText: msg];
+        [alertBox addButtonWithTitle: "OK"];
+        [alertBox addButtonWithTitle: "Cancel"];
+        [alertBox setAccessoryView: viewBox];
+        [[alertBox window] setInitialFirstResponder: spacingField];
+        var responseCode = [alertBox runModal];
+
+        var dimension = [[dimensionChoices selectedCell] title];
+
+        return [responseCode, dimension, [spacingField stringValue], centerSpacingCheckbox.state()];
+    },
+
+    distribute: function (context, dimension, spacingString, centerSpacing) {
+        var formatter = [[NSNumberFormatter alloc] init],
+            spacing = [formatter numberFromString: spacingString],
+            centerSpacing = centerSpacing + 0,
+            layer = null;
+
+        if (spacing != null) {
+            if (String(dimension) == "Horizontally") {
+                var sortedByLeft = this.sortedArray(this.selection, "frame.left"),
+                    loopH = [sortedByLeft objectEnumerator]
+                firstH = [loopH nextObject],
+                    trimmedLayerRect = Distributor.trimmedRectForLayer(firstH),
+                    trimmedLeft = CGRectGetMinX(trimmedLayerRect),
+                    lastTrimmedRight = trimmedLeft + CGRectGetWidth(trimmedLayerRect);
+                lastCenter = trimmedLeft + (CGRectGetWidth(trimmedLayerRect) / 2);
+                while (layer = [loopH nextObject]) {
+                    trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
+                    trimmedLeft = CGRectGetMinX(trimmedLayerRect);
+                    if (centerSpacing) {
+                        layer.frame().setX(lastCenter + spacing - (CGRectGetWidth(trimmedLayerRect) / 2));
+                    } else {
+                        Distributor.offsetLayerX(layer, lastTrimmedRight - trimmedLeft + spacing);
+                    }
+                    trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
+                    trimmedLeft = CGRectGetMinX(trimmedLayerRect);
+                    lastTrimmedRight = trimmedLeft + CGRectGetWidth(trimmedLayerRect);
+                    lastCenter = trimmedLeft + (CGRectGetWidth(trimmedLayerRect) / 2);
+                }
+            }
+            else {
+                var sortedByTop = this.sortedArray(this.selection, "frame.top"),
+                    loopV = [sortedByTop objectEnumerator]
+                firstV = [loopV nextObject],
+                    trimmedLayerRect = Distributor.trimmedRectForLayer(firstV),
+                    trimmedTop = CGRectGetMinY(trimmedLayerRect),
+                    lastTrimmedBottom = trimmedTop + CGRectGetHeight(trimmedLayerRect);
+                lastCenter = trimmedTop + (CGRectGetHeight(trimmedLayerRect) / 2);
+                while (layer = [loopV nextObject]) {
+                    trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
+                    trimmedTop = CGRectGetMinY(trimmedLayerRect);
+                    if (centerSpacing) {
+                        layer.frame().setY(lastCenter + spacing - (CGRectGetHeight(trimmedLayerRect) / 2));
+                    } else {
+                        Distributor.offsetLayerY(layer, lastTrimmedBottom - trimmedTop + spacing);
+                    }
+                    trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
+                    trimmedTop = CGRectGetMinY(trimmedLayerRect);
+                    lastTrimmedBottom = trimmedTop + CGRectGetHeight(trimmedLayerRect);
+                    lastCenter = trimmedTop + (CGRectGetHeight(trimmedLayerRect) / 2);
+                };
+            }
+            this.selection[0].parentGroup().layerDidEndResize();
+        }
+        else {
+            log("Wrong number format for spacing: " + spacingString);
+            [(this.app) displayDialog: ("Wrong number format for spacing: " + spacingString) withTitle: "Distributor is sad"];
+        }
+    }
+};
+
+
+var distributionHandler = function (context, pluginID, commandID, callback) {
+    Distributor.init(context, pluginID, commandID);
+    if ([(Distributor.selection) count] > 0) {
+        callback();
+    }
+    else {
+        log("No selection to distribute");
+        [(Distributor.app) displayDialog: "No selection, no fun." withTitle: "Distributor is sad"];
+    }
+}
+
+var onRun = function (context) {
+    this.distributionHandler(context, "com.betterthantomorrow.sketch.distributor", "distributor", function () {
+        var choices = Distributor.createChoices('Distribute ' + [(Distributor.selection) count] + ' objects'),
+            buttonChoice = choices[0] == 1000 ? "OK" : "Cancel",
+            dimension = choices[1],
+            spacingString = choices[2],
+            centerSpacing = choices[3],
+            spacing = null;
+
+        if (buttonChoice === "OK") {
+            Distributor.distribute(context, dimension, spacingString, centerSpacing);
+
+            try {
+                [(Distributor.command) setValue: spacingString forKey: "distributorSpacing" onLayer: Distributor.page];
+                [(Distributor.command) setValue: (String(dimension) === "Horizontally" ? 0 : 1) forKey: "distributorDimension" onLayer: Distributor.page];
+                [(Distributor.command) setValue: centerSpacing forKey: "distributorCenterSpacing" onLayer: Distributor.page];
+            }
+            catch (err) {
+                log("Failed saving values, layer commands not supported?");
+            }
+        }
+    });
+}
+
+var onRunH = function (context) {
+    this.distributionHandler(context, "com.betterthantomorrow.sketch.distributor", "distributor-h", function () {
+        try {
+            [(Distributor.command) setValue: 0 forKey: "distributorDimension" onLayer: Distributor.page];
+            onRun(context);
+        }
+        catch (err) {
+            log("Failed saving values, layer commands not supported?");
+        }
+    });
+}
+
+var onRunV = function (context) {
+    this.distributionHandler(context, "com.betterthantomorrow.sketch.distributor", "distributor-v", function () {
+        try {
+            [(Distributor.command) setValue: 1 forKey: "distributorDimension" onLayer: Distributor.page];
+            onRun(context);
+        }
+        catch (err) {
+            log("Failed saving values, layer commands not supported?");
+        }
+    });
+}
+
+var onRepeat = function (context) {
+
+    this.distributionHandler(context, "com.betterthantomorrow.sketch.distributor", "repeat", function () {
+        Distributor.distribute(context, Distributor.dimension == 0 ? "Horizontally" : "Vertically", Distributor.spacing, Distributor.centerSpacing);
+    });
+}
+

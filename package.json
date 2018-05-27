@@ -1,0 +1,33 @@
+{
+    "name": "sketchdistributor",
+    "version": "1.1.1",
+    "description": "Distribute selected objects vertically or horizontally with exact spacing.",
+    "author": {
+        "name": "Better Than Tomorrow"
+    },
+    "engines": {
+        "sketch": ">=3.4"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/PEZ/SketchDistributor"
+    },
+    "skpm": {
+        "name": "Distributor",
+        "manifest": "src/manifest.json",
+        "main": "Distributor.sketchplugin"
+    },
+    "scripts": {
+        "build": "skpm-build && ./post_build.sh",
+        "watch": "skpm-build --watch",
+        "start": "skpm-build --watch --run",
+        "postinstall": "npm run build && skpm-link"
+    },
+    "devDependencies": {
+        "@skpm/builder": "^0.3.0"
+    },
+    "dependencies": {
+        "npm": "^6.0.0",
+        "skpm": "^1.0.15"
+    }
+}
