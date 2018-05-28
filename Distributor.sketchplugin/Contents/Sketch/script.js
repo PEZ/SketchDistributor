@@ -3,7 +3,8 @@ var Distributor = {
     spacing: null,
     DEFAULT_DIMENSION: 0,
     dimension: null,
-
+    DEFAULT_CENTER_SPACING: false,
+    centerSpacing: null,
     selection: null,
     command: null,
     page: null,
@@ -18,6 +19,7 @@ var Distributor = {
         try {
             this.spacing = [(this.command) valueForKey:"distributorSpacing" onLayer:this.page];
             this.dimension = [(this.command) valueForKey:"distributorDimension" onLayer:this.page];
+            this.centerSpacing = [(this.command) valueForKey:"distributorCenterSpacing" onLayer:this.page];
         }
         catch (err) {
             log("Failed fetching cashed values, layer commands not supported?");
@@ -27,6 +29,9 @@ var Distributor = {
         }
         if (this.dimension == null || (this.dimension != 0 && this.dimension != 1)) {
             this.dimension = this.DEFAULT_DIMENSION;
+        }
+        if (this.centerSpacing == null) {
+            this.centerSpacing = this.DEFAULT_CENTER_SPACING;
         }
     },
 
@@ -94,10 +99,10 @@ var Distributor = {
         [viewBox addSubview:spacingField];
 
         var centerSpacingCheckbox = [[NSButton alloc] initWithFrame:NSMakeRect(80, 0, 180, 20)];
-		  centerSpacingCheckbox.setState(false);
-		  centerSpacingCheckbox.setButtonType(NSSwitchButton);
-		  centerSpacingCheckbox.setBezelStyle(0);
-		  centerSpacingCheckbox.setTitle("Space between centers");
+          centerSpacingCheckbox.setState(this.centerSpacing);
+          centerSpacingCheckbox.setButtonType(NSSwitchButton);
+          centerSpacingCheckbox.setBezelStyle(0);
+          centerSpacingCheckbox.setTitle("Space between centers");
         [viewBox addSubview:centerSpacingCheckbox];
 
         [viewBox sizeToFit];
@@ -111,7 +116,6 @@ var Distributor = {
         var responseCode = [alertBox runModal];
 
         var dimension = [[dimensionChoices selectedCell] title];
-        var centerSpacing = [centerSpacingCheckbox state] == NSOnState;
 
         return [responseCode, dimension, [spacingField stringValue], centerSpacingCheckbox.state()];
     },
@@ -134,9 +138,9 @@ var Distributor = {
                     trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
                     trimmedLeft = CGRectGetMinX(trimmedLayerRect);
                     if (centerSpacing) {
-                    	layer.frame().setX(lastCenter + spacing - (CGRectGetWidth(trimmedLayerRect) / 2));
+                        layer.frame().setX(lastCenter + spacing - (CGRectGetWidth(trimmedLayerRect) / 2));
                     } else {
-                    	Distributor.offsetLayerX(layer, lastTrimmedRight - trimmedLeft + spacing);
+                        Distributor.offsetLayerX(layer, lastTrimmedRight - trimmedLeft + spacing);
                     }
                     trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
                     trimmedLeft = CGRectGetMinX(trimmedLayerRect);
@@ -156,9 +160,9 @@ var Distributor = {
                     trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
                     trimmedTop = CGRectGetMinY(trimmedLayerRect);
                     if (centerSpacing) {
-                    	layer.frame().setY(lastCenter + spacing - (CGRectGetHeight(trimmedLayerRect) / 2));
+                        layer.frame().setY(lastCenter + spacing - (CGRectGetHeight(trimmedLayerRect) / 2));
                     } else {
-                    	Distributor.offsetLayerY(layer, lastTrimmedBottom - trimmedTop + spacing);
+                        Distributor.offsetLayerY(layer, lastTrimmedBottom - trimmedTop + spacing);
                     }
                     trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
                     trimmedTop = CGRectGetMinY(trimmedLayerRect);
@@ -202,6 +206,7 @@ var onRun = function(context) {
             try {
                 [(Distributor.command) setValue:spacingString forKey:"distributorSpacing" onLayer:Distributor.page];
                 [(Distributor.command) setValue:(String(dimension) === "Horizontally" ? 0 : 1) forKey:"distributorDimension" onLayer:Distributor.page];
+                [(Distributor.command) setValue:centerSpacing forKey:"distributorCenterSpacing" onLayer:Distributor.page];
             }
             catch (err) {
                 log("Failed saving values, layer commands not supported?");
@@ -236,6 +241,7 @@ var onRunV = function(context) {
 
 var onRepeat = function(context) {
     this.distributionHandler(context, "com.betterthantomorrow.sketch.distributor", "repeat", function() {
-        Distributor.distribute(Distributor.dimension == 0 ? "Horizontally" : "Vertically", Distributor.spacing);
+        Distributor.distribute(Distributor.dimension == 0 ? "Horizontally" : "Vertically", Distributor.spacing, Distributor.centerSpacing);
     });
 }
+
