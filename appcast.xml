@@ -28,15 +28,15 @@
         <enclosure url="https://github.com/PEZ/SketchDistributor/archive/master.zip" sparkle:version="1.1.1" />
       </item>
       <item>
-        <title>Version 1.2.0</title>
+        <title>Version 1.2.1</title>
         <description>
           <![CDATA[
             <ul>
-              <li>Add option to distribute between centers, v1.2.0</li>
+              <li>Add option to distribute between centers, v1.2.1</li>
             </ul>
           ]]>
         </description>
-        <enclosure url="https://github.com/PEZ/SketchDistributor/archive/master.zip" sparkle:version="1.2.0" />
+        <enclosure url="https://github.com/PEZ/SketchDistributor/archive/master.zip" sparkle:version="1.2.1" />
       </item>
   </channel>
 </rss>
