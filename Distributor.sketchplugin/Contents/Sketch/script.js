@@ -3,7 +3,8 @@ var Distributor = {
     spacing: null,
     DEFAULT_DIMENSION: 0,
     dimension: null,
-
+    DEFAULT_CENTER_SPACING: false,
+    centerSpacing: null,
     selection: null,
     command: null,
     page: null,
@@ -18,6 +19,7 @@ var Distributor = {
         try {
             this.spacing = [(this.command) valueForKey:"distributorSpacing" onLayer:this.page];
             this.dimension = [(this.command) valueForKey:"distributorDimension" onLayer:this.page];
+            this.centerSpacing = [(this.command) valueForKey:"distributorCenterSpacing" onLayer:this.page];
         }
         catch (err) {
             log("Failed fetching cashed values, layer commands not supported?");
@@ -27,6 +29,9 @@ var Distributor = {
         }
         if (this.dimension == null || (this.dimension != 0 && this.dimension != 1)) {
             this.dimension = this.DEFAULT_DIMENSION;
+        }
+        if (this.centerSpacing == null) {
+            this.centerSpacing = this.DEFAULT_CENTER_SPACING;
         }
     },
 
@@ -89,9 +94,16 @@ var Distributor = {
 
         [viewBox addSubview:Distributor.createLabel("Spacing:", NSMakeRect(0, 20, 300, 20))];
 
-        var spacingField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 100, 20)];
+        var spacingField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 70, 20)];
         [spacingField setStringValue:this.spacing];
         [viewBox addSubview:spacingField];
+
+        var centerSpacingCheckbox = [[NSButton alloc] initWithFrame:NSMakeRect(80, 0, 180, 20)];
+          centerSpacingCheckbox.setState(this.centerSpacing);
+          centerSpacingCheckbox.setButtonType(NSSwitchButton);
+          centerSpacingCheckbox.setBezelStyle(0);
+          centerSpacingCheckbox.setTitle("Space between centers");
+        [viewBox addSubview:centerSpacingCheckbox];
 
         [viewBox sizeToFit];
 
@@ -104,10 +116,11 @@ var Distributor = {
         var responseCode = [alertBox runModal];
 
         var dimension = [[dimensionChoices selectedCell] title];
-        return [responseCode, dimension, [spacingField stringValue]];
+
+        return [responseCode, dimension, [spacingField stringValue], centerSpacingCheckbox.state()];
     },
 
-    distribute: function(dimension, spacingString) {
+    distribute: function(dimension, spacingString, centerSpacing) {
         var formatter = [[NSNumberFormatter alloc] init],
             spacing   = [formatter numberFromString:spacingString]
             layer = null;
@@ -120,13 +133,19 @@ var Distributor = {
                     trimmedLayerRect  = Distributor.trimmedRectForLayer(firstH),
                     trimmedLeft       = CGRectGetMinX(trimmedLayerRect),
                     lastTrimmedRight  = trimmedLeft + CGRectGetWidth(trimmedLayerRect);
+                    lastCenter        = trimmedLeft + (CGRectGetWidth(trimmedLayerRect) / 2);
                 while (layer = [loopH nextObject]) {
                     trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
                     trimmedLeft = CGRectGetMinX(trimmedLayerRect);
-                    Distributor.offsetLayerX(layer, lastTrimmedRight - trimmedLeft + spacing);
+                    if (centerSpacing) {
+                        layer.frame().setX(lastCenter + spacing - (CGRectGetWidth(trimmedLayerRect) / 2));
+                    } else {
+                        Distributor.offsetLayerX(layer, lastTrimmedRight - trimmedLeft + spacing);
+                    }
                     trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
                     trimmedLeft = CGRectGetMinX(trimmedLayerRect);
                     lastTrimmedRight = trimmedLeft + CGRectGetWidth(trimmedLayerRect);
+                    lastCenter = trimmedLeft + (CGRectGetWidth(trimmedLayerRect) / 2);
                 }
             }
             else {
@@ -136,13 +155,19 @@ var Distributor = {
                     trimmedLayerRect  = Distributor.trimmedRectForLayer(firstV),
                     trimmedTop        = CGRectGetMinY(trimmedLayerRect),
                     lastTrimmedBottom = trimmedTop + CGRectGetHeight(trimmedLayerRect);
+                    lastCenter        = trimmedTop + (CGRectGetHeight(trimmedLayerRect) / 2);
                 while (layer = [loopV nextObject]) {
                     trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
                     trimmedTop = CGRectGetMinY(trimmedLayerRect);
-                    Distributor.offsetLayerY(layer, lastTrimmedBottom - trimmedTop + spacing);
+                    if (centerSpacing) {
+                        layer.frame().setY(lastCenter + spacing - (CGRectGetHeight(trimmedLayerRect) / 2));
+                    } else {
+                        Distributor.offsetLayerY(layer, lastTrimmedBottom - trimmedTop + spacing);
+                    }
                     trimmedLayerRect = Distributor.trimmedRectForLayer(layer);
                     trimmedTop = CGRectGetMinY(trimmedLayerRect);
                     lastTrimmedBottom = trimmedTop + CGRectGetHeight(trimmedLayerRect);
+                    lastCenter        = trimmedTop + (CGRectGetHeight(trimmedLayerRect) / 2);
                 };
             }
             this.selection[0].parentGroup().layerDidEndResize();
@@ -172,14 +197,16 @@ var onRun = function(context) {
             buttonChoice = choices[0] == 1000 ? "OK" : "Cancel",
             dimension = choices[1],
             spacingString = choices[2],
+            centerSpacing = choices[3],
             spacing = null;
 
         if (buttonChoice === "OK") {
-            Distributor.distribute(dimension, spacingString);
+            Distributor.distribute(dimension, spacingString, centerSpacing);
 
             try {
                 [(Distributor.command) setValue:spacingString forKey:"distributorSpacing" onLayer:Distributor.page];
                 [(Distributor.command) setValue:(String(dimension) === "Horizontally" ? 0 : 1) forKey:"distributorDimension" onLayer:Distributor.page];
+                [(Distributor.command) setValue:centerSpacing forKey:"distributorCenterSpacing" onLayer:Distributor.page];
             }
             catch (err) {
                 log("Failed saving values, layer commands not supported?");
@@ -214,6 +241,7 @@ var onRunV = function(context) {
 
 var onRepeat = function(context) {
     this.distributionHandler(context, "com.betterthantomorrow.sketch.distributor", "repeat", function() {
-        Distributor.distribute(Distributor.dimension == 0 ? "Horizontally" : "Vertically", Distributor.spacing);
+        Distributor.distribute(Distributor.dimension == 0 ? "Horizontally" : "Vertically", Distributor.spacing, Distributor.centerSpacing);
     });
 }
+

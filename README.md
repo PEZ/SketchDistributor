@@ -2,7 +2,7 @@
 
 [![GitHub release](https://img.shields.io/badge/Works%20with-Sketch%20Runner-blue.svg?colorB=308ADF)](http://bit.ly/SketchRunnerWebsite)
 
-A [Sketch](https://sketchapp.com) plugin that distributes selected objects vertically or horizontally *with a specified spacing*.
+A [Sketch](https://sketchapp.com) plugin that distributes selected objects vertically or horizontally *with a specified spacing* between objects edges or centers (as the formerly available "boxed" setting in Sketch Grid).
 
 Like so:
 
