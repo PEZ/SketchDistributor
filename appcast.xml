@@ -38,5 +38,16 @@
         </description>
         <enclosure url="https://github.com/PEZ/SketchDistributor/archive/master.zip" sparkle:version="1.2.1" />
       </item>
+      <item>
+        <title>Version 1.2.2</title>
+        <description>
+          <![CDATA[
+            <ul>
+              <li>Remove some debug logging, v1.2.2</li>
+            </ul>
+          ]]>
+        </description>
+        <enclosure url="https://github.com/PEZ/SketchDistributor/archive/master.zip" sparkle:version="1.2.2" />
+      </item>
   </channel>
 </rss>

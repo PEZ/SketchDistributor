@@ -2,7 +2,7 @@
   "author": "Better Than Tomorrow",
   "commands": [
     {
-      "script": "script.js",
+      "script": "distributor.cocoascript",
       "handler": "onRun",
       "shortcut": "ctrl option d",
       "name": "Distribute…",
@@ -11,7 +11,7 @@
       "identifier": "distributor"
     },
     {
-      "script": "script.js",
+      "script": "distributor.cocoascript",
       "handler": "onRunH",
       "shortcut": "ctrl option h",
       "name": "Distribute Horizontally…",
@@ -20,7 +20,7 @@
       "identifier": "distributor-h"
     },
     {
-      "script": "script.js",
+      "script": "distributor.cocoascript",
       "handler": "onRunV",
       "shortcut": "ctrl option v",
       "name": "Distribute Vertically…",
@@ -29,7 +29,7 @@
       "identifier": "distributor-v"
     },
     {
-      "script": "script.js",
+      "script": "distributor.cocoascript",
       "handler": "onRepeat",
       "shortcut": "ctrl option a",
       "name": "Distribute Again",
@@ -47,8 +47,9 @@
       "distributor"
     ]
   },
+  "disableCocoaScriptPreprocessor": false,
   "identifier": "com.betterthantomorrow.sketch.distributor",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Distribute selected objects vertically or horizontally with exact spacing.",
   "authorEmail": "pez@pezius.com",
   "name": "Distributor",

@@ -33,8 +33,6 @@ var Distributor = {
         if (this.centerSpacing == null) {
             this.centerSpacing = this.DEFAULT_CENTER_SPACING;
         }
-        log("foo");
-        //log("centerSpacing:  [" + this.centerSpacing + "]");
     },
 
     sortedArray: function (arr, sortDescriptorKey) {
