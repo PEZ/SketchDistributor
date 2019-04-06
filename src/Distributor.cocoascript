@@ -179,73 +179,18 @@ var Distributor = {
             log("Wrong number format for spacing: " + spacingString);
             [(this.app) displayDialog: ("Wrong number format for spacing: " + spacingString) withTitle: "Distributor is sad"];
         }
+    },
+    
+    distributionHandler: function (context, pluginID, commandID, callback) {
+        Distributor.init(context, pluginID, commandID);
+        if ([(Distributor.selection) count] > 0) {
+            callback();
+        }
+        else {
+            log("No selection to distribute");
+            [(Distributor.app) displayDialog: "No selection, no fun." withTitle: "Distributor is sad"];
+            context.document.showMessage("No selection, no fun.");
+        }
     }
+
 };
-
-
-var distributionHandler = function (context, pluginID, commandID, callback) {
-    Distributor.init(context, pluginID, commandID);
-    if ([(Distributor.selection) count] > 0) {
-        callback();
-    }
-    else {
-        log("No selection to distribute");
-        [(Distributor.app) displayDialog: "No selection, no fun." withTitle: "Distributor is sad"];
-    }
-}
-
-var onRun = function (context) {
-    this.distributionHandler(context, "com.betterthantomorrow.sketch.distributor", "distributor", function () {
-        var choices = Distributor.createChoices('Distribute ' + [(Distributor.selection) count] + ' objects'),
-            buttonChoice = choices[0] == 1000 ? "OK" : "Cancel",
-            dimension = choices[1],
-            spacingString = choices[2],
-            centerSpacing = choices[3],
-            spacing = null;
-
-        if (buttonChoice === "OK") {
-            Distributor.distribute(context, dimension, spacingString, centerSpacing);
-
-            try {
-                [(Distributor.command) setValue: spacingString forKey: "distributorSpacing" onLayer: Distributor.page];
-                [(Distributor.command) setValue: (String(dimension) === "Horizontally" ? 0 : 1) forKey: "distributorDimension" onLayer: Distributor.page];
-                [(Distributor.command) setValue: centerSpacing forKey: "distributorCenterSpacing" onLayer: Distributor.page];
-            }
-            catch (err) {
-                log("Failed saving values, layer commands not supported?");
-            }
-        }
-    });
-}
-
-var onRunH = function (context) {
-    this.distributionHandler(context, "com.betterthantomorrow.sketch.distributor", "distributor-h", function () {
-        try {
-            [(Distributor.command) setValue: 0 forKey: "distributorDimension" onLayer: Distributor.page];
-            onRun(context);
-        }
-        catch (err) {
-            log("Failed saving values, layer commands not supported?");
-        }
-    });
-}
-
-var onRunV = function (context) {
-    this.distributionHandler(context, "com.betterthantomorrow.sketch.distributor", "distributor-v", function () {
-        try {
-            [(Distributor.command) setValue: 1 forKey: "distributorDimension" onLayer: Distributor.page];
-            onRun(context);
-        }
-        catch (err) {
-            log("Failed saving values, layer commands not supported?");
-        }
-    });
-}
-
-var onRepeat = function (context) {
-
-    this.distributionHandler(context, "com.betterthantomorrow.sketch.distributor", "repeat", function () {
-        Distributor.distribute(context, Distributor.dimension == 0 ? "Horizontally" : "Vertically", Distributor.spacing, Distributor.centerSpacing);
-    });
-}
-

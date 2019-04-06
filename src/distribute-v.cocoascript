@@ -1,0 +1,13 @@
+import Distributor from './Distributor.cocoascript'
+
+export default function (context) {
+    Distributor.distributionHandler(context, "com.betterthantomorrow.sketch.distributor", "distributor-v", function () {
+        try {
+            [(Distributor.command) setValue: 1 forKey: "distributorDimension" onLayer: Distributor.page];
+            onRun(context);
+        }
+        catch (err) {
+            log("Failed saving values, layer commands not supported?");
+        }
+    });
+}

@@ -1,0 +1,7 @@
+import Distributor from './Distributor.cocoascript'
+
+export default function (context) {
+    Distributor.distributionHandler(context, "com.betterthantomorrow.sketch.distributor", "repeat", function () {
+        Distributor.distribute(context, Distributor.dimension == 0 ? "Horizontally" : "Vertically", Distributor.spacing, Distributor.centerSpacing);
+    });
+}
