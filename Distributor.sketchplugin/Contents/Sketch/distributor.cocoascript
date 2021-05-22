@@ -128,7 +128,7 @@ var Distributor = {
 
         if (spacing != null) {
             if (String(dimension) == "Horizontally") {
-                var sortedByLeft = this.sortedArray(this.selection, "frame.left"),
+                var sortedByLeft = this.sortedArray(this.selection, "frame.x"),
                     loopH = [sortedByLeft objectEnumerator]
                 firstH = [loopH nextObject],
                     trimmedLayerRect = Distributor.trimmedRectForLayer(firstH),
@@ -150,7 +150,7 @@ var Distributor = {
                 }
             }
             else {
-                var sortedByTop = this.sortedArray(this.selection, "frame.top"),
+                var sortedByTop = this.sortedArray(this.selection, "frame.y"),
                     loopV = [sortedByTop objectEnumerator]
                 firstV = [loopV nextObject],
                     trimmedLayerRect = Distributor.trimmedRectForLayer(firstV),
@@ -210,7 +210,7 @@ var onRun = function (context) {
                 [(Distributor.command) setValue: centerSpacing forKey: "distributorCenterSpacing" onLayer: Distributor.page];
             }
             catch (err) {
-                log("Failed saving values, layer commands not supported?");
+                log("Failed saving values, layer commands not supported?" + err);
             }
         }
     });
@@ -223,7 +223,7 @@ var onRunH = function (context) {
             onRun(context);
         }
         catch (err) {
-            log("Failed saving values, layer commands not supported?");
+            log("Failed saving values, layer commands not supported?" + err);
         }
     });
 }
@@ -235,7 +235,7 @@ var onRunV = function (context) {
             onRun(context);
         }
         catch (err) {
-            log("Failed saving values, layer commands not supported?");
+            log("Failed saving values, layer commands not supported?" + err);
         }
     });
 }
